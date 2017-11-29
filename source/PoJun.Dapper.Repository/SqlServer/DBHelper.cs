@@ -268,7 +268,7 @@ namespace PoJun.Dapper.Repository.SqlServer
         {
             using (IDbConnection conn = new SqlConnection(connectionString))
             {
-                return conn.Query<T>(porcdeureName, commandTimeout: commandTimeout, commandType: CommandType.StoredProcedure);
+                return conn.Query<T>(porcdeureName, commandTimeout: commandTimeout, commandType: CommandType.StoredProcedure, param: param);
             }
         }
 
@@ -290,7 +290,7 @@ namespace PoJun.Dapper.Repository.SqlServer
             using (IDbConnection conn = new SqlConnection(connectionString))
             {
                 conn.Query("");
-                return conn.QueryAsync<T>(porcdeureName, commandTimeout: commandTimeout, commandType: CommandType.StoredProcedure);
+                return conn.QueryAsync<T>(porcdeureName, commandTimeout: commandTimeout, commandType: CommandType.StoredProcedure, param: param);
             }
         }
 

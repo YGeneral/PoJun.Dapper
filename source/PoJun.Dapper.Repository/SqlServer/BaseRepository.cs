@@ -28,7 +28,7 @@ namespace PoJun.Dapper.Repository.SqlServer
         public BaseRepository(string connectionString)
         {
             ConnectionString = connectionString;
-        } 
+        }
 
         #endregion
 
@@ -77,6 +77,60 @@ namespace PoJun.Dapper.Repository.SqlServer
 
         #endregion
 
+        #region 执行增（INSERT）删（DELETE）改（UPDATE）语句或存储过程【单条SQL语句，可以获得输出参数】【同步】
+
+        /// <summary>
+        /// 执行增（INSERT）删（DELETE）改（UPDATE）语句或存储过程【单条SQL语句，可以获得输出参数】【同步】
+        /// </summary>
+        /// <param name="sql">SQL语句</param>
+        /// <param name="param">参数</param>
+        /// <param name="outParam">输出参数[参数名(@name)] </param>
+        /// <param name="commandType">如何解释命令字符串</param>
+        /// <param name="commandTimeout">超时时间</param>
+        /// <returns>Tuple(受影响的行数, Dictionary(输出参数名(@name), 输出参数))</returns>
+        public Tuple<int, Dictionary<string, string>> Execute(string sql, DynamicParameters param, List<string> outParam, CommandType? commandType = null, int? commandTimeout = null)
+        {
+            using (IDbConnection conn = new SqlConnection(ConnectionString))
+            {
+                var rows = conn.Execute(sql, param, commandTimeout: commandTimeout, commandType: commandType);
+                var outDic = new Dictionary<string, string>();
+                foreach (var item in outParam)
+                {
+                    outDic.Add(item, param.Get<string>(item));
+                }
+                return new Tuple<int, Dictionary<string, string>>(rows, outDic);
+            }
+        }
+
+        #endregion
+
+        #region 执行增（INSERT）删（DELETE）改（UPDATE）语句或存储过程【单条SQL语句，可以获得输出参数】【异步】
+
+        /// <summary>
+        /// 执行增（INSERT）删（DELETE）改（UPDATE）语句或存储过程【单条SQL语句，可以获得输出参数】【异步】
+        /// </summary>
+        /// <param name="sql">SQL语句</param>
+        /// <param name="param">参数</param>
+        /// <param name="outParam">输出参数[参数名(@name)] </param>
+        /// <param name="commandType">如何解释命令字符串</param>
+        /// <param name="commandTimeout">超时时间</param>
+        /// <returns>Tuple(受影响的行数, Dictionary(输出参数名(@name), 输出参数))</returns>
+        public async Task<Tuple<int, Dictionary<string, string>>> ExecuteAsync(string sql, DynamicParameters param, List<string> outParam, CommandType? commandType = null, int? commandTimeout = null)
+        {
+            using (IDbConnection conn = new SqlConnection(ConnectionString))
+            {
+                var rows = await conn.ExecuteAsync(sql, param, commandTimeout: commandTimeout, commandType: commandType);
+                var outDic = new Dictionary<string, string>();
+                foreach (var item in outParam)
+                {
+                    outDic.Add(item, param.Get<string>(item));
+                }
+                return new Tuple<int, Dictionary<string, string>>(rows, outDic);
+            }
+        }
+
+        #endregion
+
         #region 执行增（INSERT）删（DELETE）改（UPDATE）语句【执行单条SQL语句】【同步】
 
         /// <returns></returns>
@@ -87,7 +141,7 @@ namespace PoJun.Dapper.Repository.SqlServer
         /// <param name="param">参数</param>
         /// <param name="commandTimeout">超时时间</param>
         /// <returns>受影响的行数</returns>
-        public int Execute(string sql,  object param = null, int? commandTimeout = null)
+        public int Execute(string sql, object param = null, int? commandTimeout = null)
         {
             using (IDbConnection conn = new SqlConnection(ConnectionString))
             {
@@ -210,7 +264,7 @@ namespace PoJun.Dapper.Repository.SqlServer
         /// <param name="param">参数</param>
         /// <param name="commandTimeout">超时时间</param>
         /// <returns></returns>
-        public async Task<Tuple<IEnumerable<T>, int>> ExecuteToPaginationProcdeureAsync<T>( DynamicParameters param = null, int? commandTimeout = null)
+        public async Task<Tuple<IEnumerable<T>, int>> ExecuteToPaginationProcdeureAsync<T>(DynamicParameters param = null, int? commandTimeout = null)
         {
             using (IDbConnection conn = new SqlConnection(ConnectionString))
             {

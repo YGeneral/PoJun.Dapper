@@ -1,4 +1,5 @@
 ﻿using Dapper;
+using PoJun.Dapper.IRepository;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -11,7 +12,7 @@ namespace PoJun.Dapper.Repository.SqlServer
     /// <summary>
     /// SqlServer基础仓储
     /// </summary>
-    public class BaseRepository
+    public class BaseRepository: IBaseRepository
     {
         #region 初始化
 

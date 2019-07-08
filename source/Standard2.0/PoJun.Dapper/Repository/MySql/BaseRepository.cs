@@ -1,4 +1,5 @@
 ﻿using Dapper;
+using MySql.Data.MySqlClient;
 using PoJun.Dapper.IRepository;
 using System;
 using System.Collections.Generic;
@@ -47,7 +48,7 @@ namespace PoJun.Dapper.Repository.MySql
             var newParam = new DynamicParameters();
             newParam.AddDynamicParams(param);
             newParam.Add("@id", dbType: DbType.Int32, direction: ParameterDirection.Output);
-            using (IDbConnection conn = new SqlConnection(ConnectionString))
+            using (IDbConnection conn = new MySqlConnection(ConnectionString))
             {
                 conn.Execute(sql, newParam, commandTimeout: commandTimeout);
                 var id = newParam.Get<int>("@id");
@@ -66,12 +67,15 @@ namespace PoJun.Dapper.Repository.MySql
         /// <param name="param">参数</param>
         /// <param name="commandTimeout">超时时间</param>
         /// <returns>自增ID</returns>
-        public Task<int> InsertAsync(string sql, object param = null, int? commandTimeout = null)
+        public async Task<int> InsertAsync(string sql, object param = null, int? commandTimeout = null)
         {
             sql = $"DELIMITER;{sql};set @id= LAST_INSERT_ID();DELIMITER;";
-            using (IDbConnection conn = new SqlConnection(ConnectionString))
+            using (IDbConnection conn = new MySqlConnection(ConnectionString))
             {
-                return conn.ExecuteScalarAsync<int>(sql, param, commandTimeout: commandTimeout);
+                if (conn.State != ConnectionState.Open)
+                    conn.Open();
+                var result = await conn.ExecuteScalarAsync<int>(sql, param, commandTimeout: commandTimeout);
+                return result;
             }
         }
 
@@ -90,7 +94,7 @@ namespace PoJun.Dapper.Repository.MySql
         /// <returns>Tuple(受影响的行数, Dictionary(输出参数名(@name), 输出参数))</returns>
         public Tuple<int, Dictionary<string, string>> Execute(string sql, DynamicParameters param, List<string> outParam, CommandType? commandType = null, int? commandTimeout = null)
         {
-            using (IDbConnection conn = new SqlConnection(ConnectionString))
+            using (IDbConnection conn = new MySqlConnection(ConnectionString))
             {
                 var rows = conn.Execute(sql, param, commandTimeout: commandTimeout, commandType: commandType);
                 var outDic = new Dictionary<string, string>();
@@ -117,8 +121,10 @@ namespace PoJun.Dapper.Repository.MySql
         /// <returns>Tuple(受影响的行数, Dictionary(输出参数名(@name), 输出参数))</returns>
         public async Task<Tuple<int, Dictionary<string, string>>> ExecuteAsync(string sql, DynamicParameters param, List<string> outParam, CommandType? commandType = null, int? commandTimeout = null)
         {
-            using (IDbConnection conn = new SqlConnection(ConnectionString))
+            using (IDbConnection conn = new MySqlConnection(ConnectionString))
             {
+                if (conn.State != ConnectionState.Open)
+                    conn.Open();
                 var rows = await conn.ExecuteAsync(sql, param, commandTimeout: commandTimeout, commandType: commandType);
                 var outDic = new Dictionary<string, string>();
                 foreach (var item in outParam)
@@ -143,7 +149,7 @@ namespace PoJun.Dapper.Repository.MySql
         /// <returns>受影响的行数</returns>
         public int Execute(string sql, object param = null, int? commandTimeout = null)
         {
-            using (IDbConnection conn = new SqlConnection(ConnectionString))
+            using (IDbConnection conn = new MySqlConnection(ConnectionString))
             {
                 return conn.Execute(sql, param, commandTimeout: commandTimeout);
             }
@@ -160,11 +166,14 @@ namespace PoJun.Dapper.Repository.MySql
         /// <param name="param">参数</param>
         /// <param name="commandTimeout">超时时间</param>
         /// <returns>受影响的行数</returns>
-        public Task<int> ExecuteAsync(string sql, object param = null, int? commandTimeout = null)
+        public async Task<int> ExecuteAsync(string sql, object param = null, int? commandTimeout = null)
         {
-            using (IDbConnection conn = new SqlConnection(ConnectionString))
+            using (IDbConnection conn = new MySqlConnection(ConnectionString))
             {
-                return conn.ExecuteAsync(sql, param, commandTimeout: commandTimeout);
+                if (conn.State != ConnectionState.Open)
+                    conn.Open();
+                var result = await conn.ExecuteAsync(sql, param, commandTimeout: commandTimeout);
+                return result;
             }
         }
 
@@ -180,7 +189,7 @@ namespace PoJun.Dapper.Repository.MySql
         /// <returns></returns>
         public void ExecuteToTransaction(Dictionary<string, object> sqlDic, int? commandTimeout = null)
         {
-            using (IDbConnection conn = new SqlConnection(ConnectionString))
+            using (IDbConnection conn = new MySqlConnection(ConnectionString))
             {
                 conn.Open();
                 var trans = conn.BeginTransaction();
@@ -212,9 +221,10 @@ namespace PoJun.Dapper.Repository.MySql
         /// <returns></returns>
         public async Task ExecuteToTransactionAsync(Dictionary<string, object> sqlDic, int? commandTimeout = null)
         {
-            using (IDbConnection conn = new SqlConnection(ConnectionString))
+            using (IDbConnection conn = new MySqlConnection(ConnectionString))
             {
-                conn.Open();
+                if (conn.State != ConnectionState.Open)
+                    conn.Open();
                 var trans = conn.BeginTransaction();
                 try
                 {
@@ -245,7 +255,7 @@ namespace PoJun.Dapper.Repository.MySql
         /// <returns></returns>
         public Tuple<IEnumerable<T>, int> ExecuteToPaginationProcdeure<T>(DynamicParameters param = null, int? commandTimeout = null)
         {
-            using (IDbConnection conn = new SqlConnection(ConnectionString))
+            using (IDbConnection conn = new MySqlConnection(ConnectionString))
             {
                 var dataList = conn.Query<T>("proc_sql_Paging", param: param, commandTimeout: commandTimeout, commandType: CommandType.StoredProcedure);
                 var count = param.Get<int>("@_recordCount");
@@ -266,8 +276,10 @@ namespace PoJun.Dapper.Repository.MySql
         /// <returns></returns>
         public async Task<Tuple<IEnumerable<T>, int>> ExecuteToPaginationProcdeureAsync<T>(DynamicParameters param = null, int? commandTimeout = null)
         {
-            using (IDbConnection conn = new SqlConnection(ConnectionString))
+            using (IDbConnection conn = new MySqlConnection(ConnectionString))
             {
+                if (conn.State != ConnectionState.Open)
+                    conn.Open();
                 var dataList = await conn.QueryAsync<T>("proc_sql_Paging", param: param, commandTimeout: commandTimeout, commandType: CommandType.StoredProcedure);
                 var count = param.Get<int>("@_recordCount");
                 return new Tuple<IEnumerable<T>, int>(dataList, count);
@@ -288,7 +300,7 @@ namespace PoJun.Dapper.Repository.MySql
         /// <returns></returns>
         public IEnumerable<T> ExecuteToProcdeure<T>(string porcdeureName, object param = null, int? commandTimeout = null)
         {
-            using (IDbConnection conn = new SqlConnection(ConnectionString))
+            using (IDbConnection conn = new MySqlConnection(ConnectionString))
             {
                 return conn.Query<T>(porcdeureName, commandTimeout: commandTimeout, commandType: CommandType.StoredProcedure, param: param);
             }
@@ -306,12 +318,14 @@ namespace PoJun.Dapper.Repository.MySql
         /// <param name="param">参数</param>
         /// <param name="commandTimeout">超时时间</param>
         /// <returns></returns>
-        public Task<IEnumerable<T>> ExecuteToProcdeureAsync<T>(string porcdeureName, object param = null, int? commandTimeout = null)
+        public async Task<IEnumerable<T>> ExecuteToProcdeureAsync<T>(string porcdeureName, object param = null, int? commandTimeout = null)
         {
-            using (IDbConnection conn = new SqlConnection(ConnectionString))
+            using (IDbConnection conn = new MySqlConnection(ConnectionString))
             {
-                conn.Query("");
-                return conn.QueryAsync<T>(porcdeureName, commandTimeout: commandTimeout, commandType: CommandType.StoredProcedure, param: param);
+                if (conn.State != ConnectionState.Open)
+                    conn.Open();
+                var result = await conn.QueryAsync<T>(porcdeureName, commandTimeout: commandTimeout, commandType: CommandType.StoredProcedure, param: param);
+                return result;
             }
         }
 
@@ -329,7 +343,7 @@ namespace PoJun.Dapper.Repository.MySql
         /// <returns></returns>
         public IEnumerable<T> Query<T>(string sql, object param = null, int? commandTimeout = null)
         {
-            using (IDbConnection conn = new SqlConnection(ConnectionString))
+            using (IDbConnection conn = new MySqlConnection(ConnectionString))
             {
                 return conn.Query<T>(sql, param: param, commandTimeout: commandTimeout);
             }
@@ -347,11 +361,14 @@ namespace PoJun.Dapper.Repository.MySql
         /// <param name="param">参数</param>
         /// <param name="commandTimeout">超时时间</param>
         /// <returns></returns>
-        public Task<IEnumerable<T>> QueryAsync<T>(string sql, object param = null, int? commandTimeout = null)
+        public async Task<IEnumerable<T>> QueryAsync<T>(string sql, object param = null, int? commandTimeout = null)
         {
-            using (IDbConnection conn = new SqlConnection(ConnectionString))
+            using (IDbConnection conn = new MySqlConnection(ConnectionString))
             {
-                return conn.QueryAsync<T>(sql, param: param, commandTimeout: commandTimeout);
+                if (conn.State != ConnectionState.Open)
+                    conn.Open();
+                var result = await conn.QueryAsync<T>(sql, param: param, commandTimeout: commandTimeout);
+                return result;
             }
         }
 

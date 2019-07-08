@@ -12,7 +12,7 @@ namespace PoJun.Dapper.Repository.SqlServer
     /// <summary>
     /// SqlServer基础仓储
     /// </summary>
-    public class BaseRepository: IBaseRepository
+    public class BaseRepository : IBaseRepository
     {
         #region 初始化
 
@@ -66,12 +66,15 @@ namespace PoJun.Dapper.Repository.SqlServer
         /// <param name="param">参数</param>
         /// <param name="commandTimeout">超时时间</param>
         /// <returns>自增ID</returns>
-        public Task<int> InsertAsync(string sql, object param = null, int? commandTimeout = null)
+        public async Task<int> InsertAsync(string sql, object param = null, int? commandTimeout = null)
         {
             sql = sql + ";select @id= SCOPE_IDENTITY();";
             using (IDbConnection conn = new SqlConnection(ConnectionString))
             {
-                return conn.ExecuteScalarAsync<int>(sql, param, commandTimeout: commandTimeout);
+                if (conn.State != ConnectionState.Open)
+                    conn.Open();
+                var result = await conn.ExecuteScalarAsync<int>(sql, param, commandTimeout: commandTimeout);
+                return result;
             }
         }
 
@@ -119,6 +122,8 @@ namespace PoJun.Dapper.Repository.SqlServer
         {
             using (IDbConnection conn = new SqlConnection(ConnectionString))
             {
+                if (conn.State != ConnectionState.Open)
+                    conn.Open();
                 var rows = await conn.ExecuteAsync(sql, param, commandTimeout: commandTimeout, commandType: commandType);
                 var outDic = new Dictionary<string, string>();
                 foreach (var item in outParam)
@@ -160,11 +165,14 @@ namespace PoJun.Dapper.Repository.SqlServer
         /// <param name="param">参数</param>
         /// <param name="commandTimeout">超时时间</param>
         /// <returns>受影响的行数</returns>
-        public Task<int> ExecuteAsync(string sql, object param = null, int? commandTimeout = null)
+        public async Task<int> ExecuteAsync(string sql, object param = null, int? commandTimeout = null)
         {
             using (IDbConnection conn = new SqlConnection(ConnectionString))
             {
-                return conn.ExecuteAsync(sql, param, commandTimeout: commandTimeout);
+                if (conn.State != ConnectionState.Open)
+                    conn.Open();
+                var result = await conn.ExecuteAsync(sql, param, commandTimeout: commandTimeout);
+                return result;
             }
         }
 
@@ -214,7 +222,8 @@ namespace PoJun.Dapper.Repository.SqlServer
         {
             using (IDbConnection conn = new SqlConnection(ConnectionString))
             {
-                conn.Open();
+                if (conn.State != ConnectionState.Open)
+                    conn.Open();
                 var trans = conn.BeginTransaction();
                 try
                 {
@@ -268,6 +277,8 @@ namespace PoJun.Dapper.Repository.SqlServer
         {
             using (IDbConnection conn = new SqlConnection(ConnectionString))
             {
+                if (conn.State != ConnectionState.Open)
+                    conn.Open();
                 var dataList = await conn.QueryAsync<T>("proc_sql_Paging", param: param, commandTimeout: commandTimeout, commandType: CommandType.StoredProcedure);
                 var count = param.Get<int>("@recordCount");
                 return new Tuple<IEnumerable<T>, int>(dataList, count);
@@ -306,12 +317,14 @@ namespace PoJun.Dapper.Repository.SqlServer
         /// <param name="param">参数</param>
         /// <param name="commandTimeout">超时时间</param>
         /// <returns></returns>
-        public Task<IEnumerable<T>> ExecuteToProcdeureAsync<T>(string porcdeureName, object param = null, int? commandTimeout = null)
+        public async Task<IEnumerable<T>> ExecuteToProcdeureAsync<T>(string porcdeureName, object param = null, int? commandTimeout = null)
         {
             using (IDbConnection conn = new SqlConnection(ConnectionString))
             {
-                conn.Query("");
-                return conn.QueryAsync<T>(porcdeureName, commandTimeout: commandTimeout, commandType: CommandType.StoredProcedure, param: param);
+                if (conn.State != ConnectionState.Open)
+                    conn.Open();
+                var result = await conn.QueryAsync<T>(porcdeureName, commandTimeout: commandTimeout, commandType: CommandType.StoredProcedure, param: param);
+                return result;
             }
         }
 
@@ -347,11 +360,14 @@ namespace PoJun.Dapper.Repository.SqlServer
         /// <param name="param">参数</param>
         /// <param name="commandTimeout">超时时间</param>
         /// <returns></returns>
-        public Task<IEnumerable<T>> QueryAsync<T>(string sql, object param = null, int? commandTimeout = null)
+        public async Task<IEnumerable<T>> QueryAsync<T>(string sql, object param = null, int? commandTimeout = null)
         {
             using (IDbConnection conn = new SqlConnection(ConnectionString))
             {
-                return conn.QueryAsync<T>(sql, param: param, commandTimeout: commandTimeout);
+                if (conn.State != ConnectionState.Open)
+                    conn.Open();
+                var result = await conn.QueryAsync<T>(sql, param: param, commandTimeout: commandTimeout);
+                return result;
             }
         }
 

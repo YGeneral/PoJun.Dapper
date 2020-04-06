@@ -152,6 +152,12 @@ namespace PoJun.Dapper.IRepository
 
         #region Linq执行
 
+        /// <summary>
+        /// 初始化Linq查询
+        /// </summary>
+        /// <returns></returns>
+        IBaseRepository<T> initLinq();
+
         IBaseRepository<T> Set<TResult>(Expression<Func<T, TResult>> column, ISubQuery subquery);
         IBaseRepository<T> Set<TResult>(Expression<Func<T, TResult>> column, TResult value);
         IBaseRepository<T> Set<TResult>(Expression<Func<T, TResult>> column, Expression<Func<T, TResult>> expression);

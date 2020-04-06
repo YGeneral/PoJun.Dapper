@@ -11,6 +11,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "NetFramework", "NetFramewor
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PoJun.Dapper", "Standard2.0\PoJun.Dapper\PoJun.Dapper.csproj", "{709B3827-0E26-4FED-B083-2876C94D5856}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PoJun.Dapper.Test", "Standard2.0\PoJun.Dapper.Test\PoJun.Dapper.Test.csproj", "{9FC290AA-28BA-4A13-A566-77AD38F2A09E}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -25,6 +27,10 @@ Global
 		{709B3827-0E26-4FED-B083-2876C94D5856}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{709B3827-0E26-4FED-B083-2876C94D5856}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{709B3827-0E26-4FED-B083-2876C94D5856}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9FC290AA-28BA-4A13-A566-77AD38F2A09E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9FC290AA-28BA-4A13-A566-77AD38F2A09E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9FC290AA-28BA-4A13-A566-77AD38F2A09E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9FC290AA-28BA-4A13-A566-77AD38F2A09E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -32,6 +38,7 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 		{D9BE7DC5-47D5-452A-96B8-671754F2AAAD} = {7765CF68-5ADB-46EA-9479-DEC3033C7E15}
 		{709B3827-0E26-4FED-B083-2876C94D5856} = {7E8A5103-A444-4176-90C5-4DE3B0F9C2B2}
+		{9FC290AA-28BA-4A13-A566-77AD38F2A09E} = {7E8A5103-A444-4176-90C5-4DE3B0F9C2B2}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {6492B233-5BCD-45E9-9D0C-E9CA5C0A8EE3}

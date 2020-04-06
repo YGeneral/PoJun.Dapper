@@ -14,9 +14,25 @@ namespace PoJun.Dapper
 	public enum ColumnKey
     {
         None,
+
+        /// <summary>
+        /// 主键
+        /// </summary>
         Primary,
+
+        /// <summary>
+        /// 
+        /// </summary>
         Quniue,
+
+        /// <summary>
+        /// 唯一
+        /// </summary>
         Unique,
+
+        /// <summary>
+        /// 外键
+        /// </summary>
         Foreign
     }
 }

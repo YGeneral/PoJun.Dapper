@@ -245,9 +245,29 @@ namespace PoJun.Dapper
                 {
                     value = Convert.ToBoolean(value) ? 1 : 0;
                 }
-                var key = string.Format("{0}{1}{2}", _prefix, _paramName, _param.Count);
-                _param.Add(key, value);
-                _build.Append(key);
+                else if (value is int[])
+                {
+                    value = $"({string.Join(",", (int[])value)})";
+                }
+                else if (value is List<int>)
+                {
+                    value = $"({string.Join(",", (List<int>)value)})";
+                }
+                else if (value is long[])
+                {
+                    value = $"({string.Join(",", (long[])value)})";
+                }
+                else if (value is List<long>)
+                {
+                    value = $"({string.Join(",", (List<long>)value)})";
+                }
+                else if (value is string[] || value is List<string>)
+                {
+                    value = $"({string.Join(",", (string[])value)})";
+                }
+                //var key = string.Format("{0}{1}{2}", _prefix, _paramName, _param.Count);
+                //_param.Add(key, value);
+                _build.Append(value);
             }
         }
         #endregion

@@ -482,9 +482,12 @@ namespace PoJun.Dapper.Repository.SqlServer
                 _setBuffer.Append(",");
             }
             var columns = ExpressionUtil.BuildColumn(column, _param, _prefix).First();
-            var key = string.Format("{0}{1}", columns.Key, _param.Count);
-            _param.Add(key, value);
-            _setBuffer.AppendFormat("{0} = @{1}", columns.Value, key);
+            if(_param != null)
+            {
+                var key = string.Format("{0}{1}", columns.Key, _param.Count);
+                _param.Add(key, value);
+            }            
+            _setBuffer.AppendFormat("{0} = {1}", columns.Key, value);
             return this;
         }
         public IBaseRepository<T> Set<TResult>(Expression<Func<T, TResult>> column, Expression<Func<T, TResult>> value)
@@ -862,6 +865,30 @@ namespace PoJun.Dapper.Repository.SqlServer
         #endregion
 
         #region property
+
+        /// <summary>
+        /// 初始化Linq查询
+        /// </summary>
+        /// <returns></returns>
+        public IBaseRepository<T> initLinq()
+        {
+            _columnBuffer = new StringBuilder();
+            _filters = new List<string>();
+            _setBuffer = new StringBuilder();
+            _havingBuffer = new StringBuilder();
+            _whereBuffer = new StringBuilder();
+            _groupBuffer = new StringBuilder();
+            _orderBuffer = new StringBuilder();
+            _distinctBuffer = new StringBuilder();
+            _countBuffer = new StringBuilder();
+            _sumBuffer = new StringBuilder();
+            _lock = new StringBuilder();
+            _table = EntityUtil.GetTable<T>();
+            pageIndex = null;
+            pageCount = null;
+            return this;
+        }
+
         public Dictionary<string, object> _param { get; set; }
         public Dictionary<string, string> _columns = new Dictionary<string, string>();
         public StringBuilder _columnBuffer = new StringBuilder();

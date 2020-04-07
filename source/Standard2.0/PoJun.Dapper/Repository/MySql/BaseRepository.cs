@@ -914,7 +914,7 @@ namespace PoJun.Dapper.Repository.MySql
         #region property
 
         /// <summary>
-        /// 初始化Linq查询
+        /// 初始化Linq查询的变量
         /// </summary>
         /// <returns></returns>
         public IBaseRepository<T> initLinq()

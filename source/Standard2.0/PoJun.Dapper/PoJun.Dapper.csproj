@@ -1,14 +1,14 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <PackageId>PoJun.Dapper.Extension</PackageId>
+    <PackageId>PoJun.Dapper.Repository</PackageId>
     <PackageTags>orm;sql;micro-orm</PackageTags>
     <Title>Dapper</Title>
     <Description></Description>
     <Authors>PoJun</Authors>
     <TargetFrameworks>net452;net46;net47;netstandard2.0;netcoreapp2.1</TargetFrameworks>
-    <Company>PoJun.Dapper.Extension</Company>
-    <Product>PoJun.Dapper.Extension</Product>
+    <Company>PoJun.Dapper.Repository</Company>
+    <Product>PoJun.Dapper.Repository</Product>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <AssemblyVersion>3.0.0.0</AssemblyVersion>
     <FileVersion>3.0.0.0</FileVersion>

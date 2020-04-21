@@ -15,32 +15,32 @@ namespace PoJun.Dapper
     public class ColumnAttribute : Attribute
     {
         /// <summary>
-        /// 字段名称
+        /// 字段名称（用于映射字段名和数据库字段）
         /// </summary>
         public string Name { get; set; }
 
         /// <summary>
-        /// 
+        /// 目前实现了Primary的定义，设置为Primary的字段update实体时，默认采用该字段为更新条件
         /// </summary>
         public ColumnKey Key { get; set; }
 
         /// <summary>
-        /// 是否是字段(如果等于false则不参与SQL的生成)
+        /// 标识该字段是否在数据库存在，用于扩展User而不在sql中生成该字段
         /// </summary>
         public bool IsColumn { get; set; }
 
         /// <summary>
-        /// 是否自增
+        /// 设置未true时在Insert时不会向该字段设置任何值
         /// </summary>
         public bool IsIdentity { get; set; }
 
         /// <summary>
         /// 初始化字段信息
         /// </summary>
-        /// <param name="name">字段名称</param>
-        /// <param name="key"></param>
-        /// <param name="isIdentity">是否自增</param>
-        /// <param name="isColumn">是否是字段(如果等于false则不参与SQL的生成)</param>
+        /// <param name="name">字段名称（用于映射字段名和数据库字段）</param>
+        /// <param name="key">目前实现了Primary的定义，设置为Primary的字段update实体时，默认采用该字段为更新条件</param>
+        /// <param name="isIdentity">设置未true时在Insert时不会向该字段设置任何值</param>
+        /// <param name="isColumn">标识该字段是否在数据库存在，用于扩展User而不在sql中生成该字段</param>
         public ColumnAttribute(string name = null, ColumnKey key = ColumnKey.None, bool isIdentity = false, bool isColumn = true)
         {
             Name = name;

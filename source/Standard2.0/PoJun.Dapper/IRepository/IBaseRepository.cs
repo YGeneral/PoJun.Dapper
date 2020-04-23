@@ -158,6 +158,22 @@ namespace PoJun.Dapper.IRepository
         /// <returns></returns>
         IBaseRepository<T> initLinq();
 
+        string BuildInsert(Expression expression = null);
+
+        string BuildUpdate(bool allColumn = true);
+
+        string BuildUpdate(Expression expression);
+
+        string BuildDelete();
+
+        string BuildSelect();
+
+        string BuildCount();
+
+        string BuildExists();
+
+        string BuildSum();
+
         IBaseRepository<T> Set<TResult>(Expression<Func<T, TResult>> column, ISubQuery subquery);
         IBaseRepository<T> Set<TResult>(Expression<Func<T, TResult>> column, TResult value);
         IBaseRepository<T> Set<TResult>(Expression<Func<T, TResult>> column, Expression<Func<T, TResult>> expression);

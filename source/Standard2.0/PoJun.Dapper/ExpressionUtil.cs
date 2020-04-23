@@ -267,6 +267,7 @@ namespace PoJun.Dapper
                 }
                 //var key = string.Format("{0}{1}{2}", _prefix, _paramName, _param.Count);
                 //_param.Add(key, value);
+                value = $"'{value}'";
                 _build.Append(value);
             }
         }

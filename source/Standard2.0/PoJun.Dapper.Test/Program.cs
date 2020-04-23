@@ -13,7 +13,8 @@ namespace PoJun.Dapper.Test
 
         static async Task Main(string[] args)
         {
-
+            var name = "123";
+            var result161 = userRepository.initLinq().Where(a => a.Name == name).Select().ToList();
             #region 新增
 
             //普通新增
@@ -74,6 +75,7 @@ namespace PoJun.Dapper.Test
             //查询多条数据
             var result15 = userRepository.initLinq().Select().ToList();
             var result16 = userRepository.initLinq().Where(a => a.Age > 28).Select().ToList();
+            
             var result17 = userRepository.initLinq().OrderBy(a => a.Id).OrderByDescending(a => a.Name).Select().ToList();
             var result18 = userRepository.initLinq().Take(4).Select().ToList();
             var result19 = userRepository.initLinq().Take(4).Skip(2, 2).Select().ToList();

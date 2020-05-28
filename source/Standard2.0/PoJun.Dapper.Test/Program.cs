@@ -105,7 +105,7 @@ namespace PoJun.Dapper.Test
             var result28 = userRepository.initLinq().Where(x => Operator.In(x.Id, idlists)).Select().ToList();
 
 
-            var id2ists = new List<string>() { "123" };
+            var id2ists = new List<string>() { "PoJun20200406172751" };
             var result29 = userRepository.initLinq().Where(x => Operator.In(x.Name, id2ists)).Select().ToList();
 
             #endregion

@@ -269,9 +269,15 @@ namespace PoJun.Dapper
                     _build.Append(value);
                     return;
                 }
-                else if (value is string[] || value is List<string>)
+                else if (value is string[])
                 {
-                    value = $"('{string.Join("','", value)}')";
+                    value = $"('{string.Join("','", (string[])value)}')";
+                    _build.Append(value);
+                    return;
+                }
+                else if (value is List<string>)
+                {
+                    value = $"('{string.Join("','", (List<string>)value)}')";
                     _build.Append(value);
                     return;
                 }

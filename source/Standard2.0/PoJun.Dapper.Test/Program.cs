@@ -48,10 +48,10 @@ namespace PoJun.Dapper.Test
 
             #region 删除
 
-            var result9 = await userRepository.initLinq().Where(x => Operator.In(x.Id, new int[] { 3, 4, 5 })).DeleteAsync();
+            //var result9 = await userRepository.initLinq().Where(x => Operator.In(x.Id, new int[] { 3, 4, 5 })).DeleteAsync();
 
-            var idlist = new List<int>() { 6, 7 };
-            var result10 = await userRepository.initLinq().Where(x => Operator.In(x.Id, idlist)).DeleteAsync();
+            //var idlist = new List<int>() { 6, 7 };
+            //var result10 = await userRepository.initLinq().Where(x => Operator.In(x.Id, idlist)).DeleteAsync();
 
             #endregion
 
@@ -103,6 +103,10 @@ namespace PoJun.Dapper.Test
             
             var idlists = new List<int>() { 30,31,32,33,34,35 };
             var result28 = userRepository.initLinq().Where(x => Operator.In(x.Id, idlists)).Select().ToList();
+
+
+            var id2ists = new List<string>() { "123" };
+            var result29 = userRepository.initLinq().Where(x => Operator.In(x.Name, id2ists)).Select().ToList();
 
             #endregion
 

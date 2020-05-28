@@ -248,22 +248,32 @@ namespace PoJun.Dapper
                 else if (value is int[])
                 {
                     value = $"({string.Join(",", (int[])value)})";
+                    _build.Append(value);
+                    return;
                 }
                 else if (value is List<int>)
                 {
                     value = $"({string.Join(",", (List<int>)value)})";
+                    _build.Append(value);
+                    return;
                 }
                 else if (value is long[])
                 {
                     value = $"({string.Join(",", (long[])value)})";
+                    _build.Append(value);
+                    return;
                 }
                 else if (value is List<long>)
                 {
                     value = $"({string.Join(",", (List<long>)value)})";
+                    _build.Append(value);
+                    return;
                 }
                 else if (value is string[] || value is List<string>)
                 {
-                    value = $"({string.Join(",", (string[])value)})";
+                    value = $"('{string.Join("','", value)}')";
+                    _build.Append(value);
+                    return;
                 }
                 //var key = string.Format("{0}{1}{2}", _prefix, _paramName, _param.Count);
                 //_param.Add(key, value);

@@ -261,7 +261,7 @@ namespace PoJun.Dapper.Repository.SqlServer
         /// <param name="param">参数</param>
         /// <param name="commandTimeout">超时时间</param>
         /// <returns></returns>
-        public Tuple<IEnumerable<T>, int> ExecuteToPaginationProcdeure<T>(DynamicParameters param = null, int? commandTimeout = null)
+        public Tuple<IEnumerable<T>, int> ExecuteToPaginationProcdeure(DynamicParameters param = null, int? commandTimeout = null)
         {
             using (IDbConnection conn = new SqlConnection(ConnectionString))
             {
@@ -282,7 +282,7 @@ namespace PoJun.Dapper.Repository.SqlServer
         /// <param name="param">参数</param>
         /// <param name="commandTimeout">超时时间</param>
         /// <returns></returns>
-        public async Task<Tuple<IEnumerable<T>, int>> ExecuteToPaginationProcdeureAsync<T>(DynamicParameters param = null, int? commandTimeout = null)
+        public async Task<Tuple<IEnumerable<T>, int>> ExecuteToPaginationProcdeureAsync(DynamicParameters param = null, int? commandTimeout = null)
         {
             using (IDbConnection conn = new SqlConnection(ConnectionString))
             {
@@ -306,7 +306,7 @@ namespace PoJun.Dapper.Repository.SqlServer
         /// <param name="param">参数</param>
         /// <param name="commandTimeout">超时时间</param>
         /// <returns></returns>
-        public IEnumerable<T> ExecuteToProcdeure<T>(string porcdeureName, object param = null, int? commandTimeout = null)
+        public IEnumerable<T> ExecuteToProcdeure(string porcdeureName, object param = null, int? commandTimeout = null)
         {
             using (IDbConnection conn = new SqlConnection(ConnectionString))
             {
@@ -326,7 +326,7 @@ namespace PoJun.Dapper.Repository.SqlServer
         /// <param name="param">参数</param>
         /// <param name="commandTimeout">超时时间</param>
         /// <returns></returns>
-        public async Task<IEnumerable<T>> ExecuteToProcdeureAsync<T>(string porcdeureName, object param = null, int? commandTimeout = null)
+        public async Task<IEnumerable<T>> ExecuteToProcdeureAsync(string porcdeureName, object param = null, int? commandTimeout = null)
         {
             using (IDbConnection conn = new SqlConnection(ConnectionString))
             {
@@ -349,7 +349,7 @@ namespace PoJun.Dapper.Repository.SqlServer
         /// <param name="param">参数</param>
         /// <param name="commandTimeout">超时时间</param>
         /// <returns></returns>
-        public IEnumerable<T> Query<T>(string sql, object param = null, int? commandTimeout = null)
+        public IEnumerable<T> Query(string sql, object param = null, int? commandTimeout = null)
         {
             using (IDbConnection conn = new SqlConnection(ConnectionString))
             {
@@ -369,7 +369,7 @@ namespace PoJun.Dapper.Repository.SqlServer
         /// <param name="param">参数</param>
         /// <param name="commandTimeout">超时时间</param>
         /// <returns></returns>
-        public async Task<IEnumerable<T>> QueryAsync<T>(string sql, object param = null, int? commandTimeout = null)
+        public async Task<IEnumerable<T>> QueryAsync(string sql, object param = null, int? commandTimeout = null)
         {
             using (IDbConnection conn = new SqlConnection(ConnectionString))
             {
@@ -764,7 +764,6 @@ namespace PoJun.Dapper.Repository.SqlServer
                 var sql = BuildSelect();
                 return conn.Query<TResult>(sql, _param, buffered: buffered, commandTimeout: timeout);
             }
-            return new List<TResult>();
         }
         public async Task<IEnumerable<TResult>> SelectAsync<TResult>(string columns = null, int? timeout = null)
         {
@@ -777,7 +776,6 @@ namespace PoJun.Dapper.Repository.SqlServer
                 var sql = BuildSelect();
                 return await conn.QueryAsync<TResult>(sql, _param, commandTimeout: timeout);
             }
-            return new List<TResult>();
         }
         public IEnumerable<TResult> Select<TResult>(Expression<Func<T, TResult>> columns, bool buffered = true, int? timeout = null)
         {

@@ -97,7 +97,7 @@ namespace PoJun.Dapper.IRepository
         /// <param name="param">参数</param>
         /// <param name="commandTimeout">超时时间</param>
         /// <returns></returns>
-        Tuple<IEnumerable<T>, int> ExecuteToPaginationProcdeure<T>(DynamicParameters param = null, int? commandTimeout = null);
+        Tuple<IEnumerable<T>, int> ExecuteToPaginationProcdeure(DynamicParameters param = null, int? commandTimeout = null);
 
         /// <summary>
         /// 执行分页存储过程（Procdeure）【异步】
@@ -106,7 +106,7 @@ namespace PoJun.Dapper.IRepository
         /// <param name="param">参数</param>
         /// <param name="commandTimeout">超时时间</param>
         /// <returns></returns>
-        Task<Tuple<IEnumerable<T>, int>> ExecuteToPaginationProcdeureAsync<T>(DynamicParameters param = null, int? commandTimeout = null);
+        Task<Tuple<IEnumerable<T>, int>> ExecuteToPaginationProcdeureAsync(DynamicParameters param = null, int? commandTimeout = null);
 
         /// <summary>
         /// 执行存储过程（Procdeure）【同步】
@@ -116,7 +116,7 @@ namespace PoJun.Dapper.IRepository
         /// <param name="param">参数</param>
         /// <param name="commandTimeout">超时时间</param>
         /// <returns></returns>
-        IEnumerable<T> ExecuteToProcdeure<T>(string porcdeureName, object param = null, int? commandTimeout = null);
+        IEnumerable<T> ExecuteToProcdeure(string porcdeureName, object param = null, int? commandTimeout = null);
 
         /// <summary>
         /// 执行存储过程（Procdeure）【异步】
@@ -126,7 +126,7 @@ namespace PoJun.Dapper.IRepository
         /// <param name="param">参数</param>
         /// <param name="commandTimeout">超时时间</param>
         /// <returns></returns>
-        Task<IEnumerable<T>> ExecuteToProcdeureAsync<T>(string porcdeureName, object param = null, int? commandTimeout = null);
+        Task<IEnumerable<T>> ExecuteToProcdeureAsync(string porcdeureName, object param = null, int? commandTimeout = null);
 
         /// <summary>
         /// 执行查询【同步】
@@ -136,7 +136,7 @@ namespace PoJun.Dapper.IRepository
         /// <param name="param">参数</param>
         /// <param name="commandTimeout">超时时间</param>
         /// <returns></returns>
-        IEnumerable<T> Query<T>(string sql, object param = null, int? commandTimeout = null);
+        IEnumerable<T> Query(string sql, object param = null, int? commandTimeout = null);
 
         /// <summary>
         /// 执行查询【异步】
@@ -146,7 +146,7 @@ namespace PoJun.Dapper.IRepository
         /// <param name="param">参数</param>
         /// <param name="commandTimeout">超时时间</param>
         /// <returns></returns>
-        Task<IEnumerable<T>> QueryAsync<T>(string sql, object param = null, int? commandTimeout = null);
+        Task<IEnumerable<T>> QueryAsync(string sql, object param = null, int? commandTimeout = null);
 
         #endregion
 

@@ -70,32 +70,82 @@ namespace PoJun.Dapper
             }
             return _database.Find(f => f.CSharpType == type);
         }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <returns></returns>
         public static EntityTable GetTable<T>() where T : class
         {
             return Build(typeof(T));
         }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="type"></param>
+        /// <returns></returns>
         public static EntityTable GetTable(Type type)
         {
             return Build(type);
         }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="type"></param>
+        /// <param name="func"></param>
+        /// <returns></returns>
         public static EntityColumn GetColumn(Type type, Func<EntityColumn, bool> func)
         {
             return Build(type).Columns.Find(f => func(f));
         }
     }
 
+    /// <summary>
+    /// 
+    /// </summary>
     public class EntityTable
     {
+        /// <summary>
+        /// 
+        /// </summary>
         public Type CSharpType { get; set; }
+        /// <summary>
+        /// 
+        /// </summary>
         public string TableName { get; set; }
+        /// <summary>
+        /// 
+        /// </summary>
         public string CSharpName { get; set; }
+        /// <summary>
+        /// 
+        /// </summary>
         public List<EntityColumn> Columns { get; set; }
     }
+
+    /// <summary>
+    /// 
+    /// </summary>
     public class EntityColumn
     {
+        /// <summary>
+        /// 
+        /// </summary>
         public string ColumnName { get; set; }
+        /// <summary>
+        /// 
+        /// </summary>
         public string CSharpName { get; set; }
+        /// <summary>
+        /// 
+        /// </summary>
         public bool Identity { get; set; }
+        /// <summary>
+        /// 
+        /// </summary>
         public ColumnKey ColumnKey { get; set; }
     }
 }

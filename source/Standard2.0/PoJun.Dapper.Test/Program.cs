@@ -27,10 +27,12 @@ namespace PoJun.Dapper.Test
             var result4 = userRepository.initLinq().InsertReturnId(new User() { Name = $"PoJun{DateTime.Now.ToString("yyyyMMddHHmmss")}", Age = 30 });
 
             //批量新增
-            var addList = new List<User>();
-            addList.Add(new User() { Name = $"PoJun{DateTime.Now.ToString("yyyyMMddHHmmss")}", Age = 30 });
-            addList.Add(new User() { Name = $"PoJun{DateTime.Now.ToString("yyyyMMddHHmmss")}", Age = 30 });
-            addList.Add(new User() { Name = $"PoJun{DateTime.Now.ToString("yyyyMMddHHmmss")}", Age = 30 });
+            var addList = new List<User>
+            {
+                new User() { Name = $"PoJun{DateTime.Now.ToString("yyyyMMddHHmmss")}", Age = 30 },
+                new User() { Name = $"PoJun{DateTime.Now.ToString("yyyyMMddHHmmss")}", Age = 30 },
+                new User() { Name = $"PoJun{DateTime.Now.ToString("yyyyMMddHHmmss")}", Age = 30 }
+            };
             var result5 = await userRepository.initLinq().InsertAsync(addList);
 
             #endregion

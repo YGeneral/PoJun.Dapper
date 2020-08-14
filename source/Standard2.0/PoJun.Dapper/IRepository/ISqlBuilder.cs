@@ -13,6 +13,9 @@ namespace PoJun.Dapper.IRepository
 	/// </summary>
 	public interface ISqlBuilder
 	{
+		/// <summary>
+		/// 
+		/// </summary>
 		string Build(Dictionary<string, object> values, string prefix);
 	}
 

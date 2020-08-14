@@ -3,6 +3,7 @@ using MySql.Data.MySqlClient;
 using PoJun.Dapper.IRepository;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
@@ -262,7 +263,7 @@ namespace PoJun.Dapper.Repository.MySql
         /// <param name="param">参数</param>
         /// <param name="commandTimeout">超时时间</param>
         /// <returns></returns>
-        public Tuple<IEnumerable<T>, int> ExecuteToPaginationProcdeure(DynamicParameters param = null, int? commandTimeout = null)
+        public Tuple<IEnumerable<T>, int> ExecuteToPaginationProcdeure<T>(DynamicParameters param = null, int? commandTimeout = null)
         {
             using (IDbConnection conn = new MySqlConnection(ConnectionString))
             {
@@ -283,7 +284,7 @@ namespace PoJun.Dapper.Repository.MySql
         /// <param name="param">参数</param>
         /// <param name="commandTimeout">超时时间</param>
         /// <returns></returns>
-        public async Task<Tuple<IEnumerable<T>, int>> ExecuteToPaginationProcdeureAsync(DynamicParameters param = null, int? commandTimeout = null)
+        public async Task<Tuple<IEnumerable<T>, int>> ExecuteToPaginationProcdeureAsync<T>(DynamicParameters param = null, int? commandTimeout = null)
         {
             using (IDbConnection conn = new MySqlConnection(ConnectionString))
             {
@@ -307,7 +308,7 @@ namespace PoJun.Dapper.Repository.MySql
         /// <param name="param">参数</param>
         /// <param name="commandTimeout">超时时间</param>
         /// <returns></returns>
-        public IEnumerable<T> ExecuteToProcdeure(string porcdeureName, object param = null, int? commandTimeout = null)
+        public IEnumerable<T> ExecuteToProcdeure<T>(string porcdeureName, object param = null, int? commandTimeout = null)
         {
             using (IDbConnection conn = new MySqlConnection(ConnectionString))
             {
@@ -327,7 +328,7 @@ namespace PoJun.Dapper.Repository.MySql
         /// <param name="param">参数</param>
         /// <param name="commandTimeout">超时时间</param>
         /// <returns></returns>
-        public async Task<IEnumerable<T>> ExecuteToProcdeureAsync(string porcdeureName, object param = null, int? commandTimeout = null)
+        public async Task<IEnumerable<T>> ExecuteToProcdeureAsync<T>(string porcdeureName, object param = null, int? commandTimeout = null)
         {
             using (IDbConnection conn = new MySqlConnection(ConnectionString))
             {
@@ -350,7 +351,7 @@ namespace PoJun.Dapper.Repository.MySql
         /// <param name="param">参数</param>
         /// <param name="commandTimeout">超时时间</param>
         /// <returns></returns>
-        public IEnumerable<T> Query(string sql, object param = null, int? commandTimeout = null)
+        public IEnumerable<T> Query<T>(string sql, object param = null, int? commandTimeout = null)
         {
             using (IDbConnection conn = new MySqlConnection(ConnectionString))
             {
@@ -370,7 +371,7 @@ namespace PoJun.Dapper.Repository.MySql
         /// <param name="param">参数</param>
         /// <param name="commandTimeout">超时时间</param>
         /// <returns></returns>
-        public async Task<IEnumerable<T>> QueryAsync(string sql, object param = null, int? commandTimeout = null)
+        public async Task<IEnumerable<T>> QueryAsync<T>(string sql, object param = null, int? commandTimeout = null)
         {
             using (IDbConnection conn = new MySqlConnection(ConnectionString))
             {
@@ -379,9 +380,117 @@ namespace PoJun.Dapper.Repository.MySql
                 var result = await conn.QueryAsync<T>(sql, param: param, commandTimeout: commandTimeout);
                 return result;
             }
+
         }
 
         #endregion
+
+        #region 分页查询【同步】
+
+        /// <summary>
+        /// 分页查询【同步】
+        /// </summary>
+        /// <typeparam name="T">返回结果的类型</typeparam>
+        /// <param name="sql">查询数据的SQL(请在select 后面加上 SQL_CALC_FOUND_ROWS 关键字)</param>
+        /// <param name="totalSql">查询数据数量的SQL(默认值：select FOUND_ROWS() AS Count)</param>
+        /// <param name="param">参数</param>
+        /// <param name="commandTimeout">超时时间</param>
+        /// <returns>Data：查询出的数据；Count：当前查询条件下数据的数量</returns>
+        public (IEnumerable<T> Data, long Count) QueryPageList<T>(string sql, string totalSql = "select FOUND_ROWS() AS Count", object param = null, int? commandTimeout = null)
+        {
+            using (IDbConnection conn = new MySqlConnection(ConnectionString))
+            {
+                if (conn.State != ConnectionState.Open)
+                    conn.Open();
+
+                //去除第一句SQL结尾处的分号
+                sql = RemoveEnd(sql, ";");
+                //生成新的SQL
+                sql = $"{sql};{totalSql}";
+
+                //执行查询
+                using (var multi = conn.QueryMultiple(sql, param, commandTimeout: commandTimeout))
+                {
+                    var data = multi.Read<T>();
+                    var count = (multi.Read<long>()).SingleOrDefault();
+                    return (data, count);
+                }
+            }
+        }
+
+        #endregion
+
+        #region 分页查询【异步】
+
+        /// <summary>
+        /// 分页查询【异步】
+        /// </summary>
+        /// <typeparam name="T">返回结果的类型</typeparam>
+        /// <param name="sql">查询数据的SQL(请在select 后面加上 SQL_CALC_FOUND_ROWS 关键字)</param>
+        /// <param name="totalSql">查询数据数量的SQL(默认值：select FOUND_ROWS() AS Count)</param>
+        /// <param name="param">参数</param>
+        /// <param name="commandTimeout">超时时间</param>
+        /// <returns>Data：查询出的数据；Count：当前查询条件下数据的数量</returns>
+        public async Task<(IEnumerable<T> Data, long Count)> QueryPageListAsync<T>(string sql, string totalSql = "select FOUND_ROWS() AS Count", object param = null, int? commandTimeout = null)
+        {
+            using (IDbConnection conn = new MySqlConnection(ConnectionString))
+            {
+                if (conn.State != ConnectionState.Open)
+                    conn.Open();
+
+                //去除第一句SQL结尾处的分号
+                sql = RemoveEnd(sql, ";");
+                //生成新的SQL
+                sql = $"{sql};{totalSql}";
+
+                //执行查询
+                using (var multi = await conn.QueryMultipleAsync(sql, param, commandTimeout: commandTimeout))
+                {
+                    var data = await multi.ReadAsync<T>();
+                    var count = (await multi.ReadAsync<long>()).SingleOrDefault();
+                    return (data, count);
+                }
+            }
+        }
+
+        #endregion
+
+        #endregion
+
+        #region 工具
+
+        #region RemoveEnd(移除末尾字符串)
+
+        /// <summary>
+        /// 移除末尾字符串
+        /// </summary>
+        /// <param name="value">值</param>
+        /// <param name="removeValue">要移除的值</param>
+        private static string RemoveEnd(string value, string removeValue)
+        {
+            if (string.IsNullOrWhiteSpace(value))
+                return string.Empty;
+            if (string.IsNullOrWhiteSpace(removeValue))
+                return SafeString(value);
+            if (value.ToLower().EndsWith(removeValue.ToLower()))
+                return value.Remove(value.Length - removeValue.Length, removeValue.Length);
+            return value;
+        }
+
+        #endregion
+
+        #region 安全转换为字符串，去除两端空格，当值为null时返回""
+
+        /// <summary>
+        /// 安全转换为字符串，去除两端空格，当值为null时返回""
+        /// </summary>
+        /// <param name="input">输入值</param>
+        private static string SafeString(object input)
+        {
+            return input == null ? string.Empty : input.ToString().Trim();
+        }
+
+        #endregion 
 
         #endregion
 
@@ -389,11 +498,17 @@ namespace PoJun.Dapper.Repository.MySql
 
 
         #region implement
+        /// <summary>
+        /// 
+        /// </summary>
         public IBaseRepository<T> With(string lockType)
         {
             _lock.Append(lockType);
             return this;
         }
+        /// <summary>
+        /// 
+        /// </summary>
         public IBaseRepository<T> With(LockType lockType)
         {
             if (lockType == LockType.FOR_UPADTE)
@@ -406,17 +521,26 @@ namespace PoJun.Dapper.Repository.MySql
             }
             return this;
         }
+        /// <summary>
+        /// 
+        /// </summary>
         public IBaseRepository<T> Distinct()
         {
             _distinctBuffer.Append("DISTINCT");
             return this;
         }
+        /// <summary>
+        /// 
+        /// </summary>
         public IBaseRepository<T> Filter<TResult>(Expression<Func<T, TResult>> columns)
         {
             _filters.AddRange(ExpressionUtil.BuildColumns(columns, _param, _prefix).Select(s => s.Value));
 
             return this;
         }
+        /// <summary>
+        /// 
+        /// </summary>
         public IBaseRepository<T> GroupBy(string expression)
         {
             if (_groupBuffer.Length > 0)
@@ -427,24 +551,36 @@ namespace PoJun.Dapper.Repository.MySql
 
             return this;
         }
+        /// <summary>
+        /// 
+        /// </summary>
         public IBaseRepository<T> GroupBy<TResult>(Expression<Func<T, TResult>> expression)
         {
             GroupBy(string.Join(",", ExpressionUtil.BuildColumns(expression, _param, _prefix).Select(s => s.Value)));
 
             return this;
         }
+        /// <summary>
+        /// 
+        /// </summary>
         public IBaseRepository<T> Having(string expression)
         {
             _havingBuffer.Append(expression);
 
             return this;
         }
+        /// <summary>
+        /// 
+        /// </summary>
         public IBaseRepository<T> Having(Expression<Func<T, bool?>> expression)
         {
             Having(string.Join(",", ExpressionUtil.BuildColumns(expression, _param, _prefix).Select(s => s.Value)));
 
             return this;
         }
+        /// <summary>
+        /// 
+        /// </summary>
         public IBaseRepository<T> OrderBy(string orderBy)
         {
             if (_orderBuffer.Length > 0)
@@ -455,18 +591,27 @@ namespace PoJun.Dapper.Repository.MySql
 
             return this;
         }
+        /// <summary>
+        /// 
+        /// </summary>
         public IBaseRepository<T> OrderBy<TResult>(Expression<Func<T, TResult>> expression)
         {
             OrderBy(string.Join(",", ExpressionUtil.BuildColumns(expression, _param, _prefix).Select(s => string.Format("{0} ASC", s.Value))));
 
             return this;
         }
+        /// <summary>
+        /// 
+        /// </summary>
         public IBaseRepository<T> OrderByDescending<TResult>(Expression<Func<T, TResult>> expression)
         {
             OrderBy(string.Join(",", ExpressionUtil.BuildColumns(expression, _param, _prefix).Select(s => string.Format("{0} DESC", s.Value))));
 
             return this;
         }
+        /// <summary>
+        /// 
+        /// </summary>
         public IBaseRepository<T> Page(int index, int count, out long total)
         {
             total = 0;
@@ -476,6 +621,9 @@ namespace PoJun.Dapper.Repository.MySql
 
             return this;
         }
+        /// <summary>
+        /// 
+        /// </summary>
         public IBaseRepository<T> Set<TResult>(Expression<Func<T, TResult>> column, ISubQuery subquery)
         {
             if (_setBuffer.Length > 0)
@@ -487,6 +635,9 @@ namespace PoJun.Dapper.Repository.MySql
 
             return this;
         }
+        /// <summary>
+        /// 
+        /// </summary>
         public IBaseRepository<T> Set<TResult>(Expression<Func<T, TResult>> column, TResult value)
         {
             if (_setBuffer.Length > 0)
@@ -494,15 +645,18 @@ namespace PoJun.Dapper.Repository.MySql
                 _setBuffer.Append(",");
             }
             var columns = ExpressionUtil.BuildColumn(column, _param, _prefix).First();
-            if(_param != null)
+            if (_param != null)
             {
                 var key = string.Format("{0}{1}", columns.Key, _param.Count);
                 _param.Add(key, value);
-            }            
+            }
             _setBuffer.AppendFormat("{0} = {1}", columns.Key, value);
 
             return this;
         }
+        /// <summary>
+        /// 
+        /// </summary>
         public IBaseRepository<T> Set<TResult>(Expression<Func<T, TResult>> column, Expression<Func<T, TResult>> value)
         {
             if (_setBuffer.Length > 0)
@@ -515,6 +669,9 @@ namespace PoJun.Dapper.Repository.MySql
 
             return this;
         }
+        /// <summary>
+        /// 
+        /// </summary>
         public IBaseRepository<T> Skip(int index, int count)
         {
             pageIndex = index;
@@ -522,12 +679,18 @@ namespace PoJun.Dapper.Repository.MySql
 
             return this;
         }
+        /// <summary>
+        /// 
+        /// </summary>
         public IBaseRepository<T> Take(int count)
         {
             Skip(0, count);
 
             return this;
         }
+        /// <summary>
+        /// 
+        /// </summary>
         public IBaseRepository<T> Where(string expression)
         {
             if (_whereBuffer.Length > 0)
@@ -538,12 +701,18 @@ namespace PoJun.Dapper.Repository.MySql
 
             return this;
         }
+        /// <summary>
+        /// 
+        /// </summary>
         public IBaseRepository<T> Where(Expression<Func<T, bool?>> expression)
         {
             Where(ExpressionUtil.BuildExpression(expression, _param, _prefix));
 
             return this;
         }
+        /// <summary>
+        /// 
+        /// </summary>
         public int Delete(int? timeout = null)
         {
             using (IDbConnection conn = new MySqlConnection(ConnectionString))
@@ -552,6 +721,9 @@ namespace PoJun.Dapper.Repository.MySql
                 return conn.Execute(sql, _param, commandTimeout: timeout);
             }
         }
+        /// <summary>
+        /// 
+        /// </summary>
         public async Task<int> DeleteAsync(int? timeout = null)
         {
             using (IDbConnection conn = new MySqlConnection(ConnectionString))
@@ -560,6 +732,9 @@ namespace PoJun.Dapper.Repository.MySql
                 return await conn.ExecuteAsync(sql, _param, commandTimeout: timeout);
             }
         }
+        /// <summary>
+        /// 
+        /// </summary>
         public int Insert(Expression<Func<T, T>> expression, int? timeout = null)
         {
             using (IDbConnection conn = new MySqlConnection(ConnectionString))
@@ -573,7 +748,6 @@ namespace PoJun.Dapper.Repository.MySql
         /// 新增并返回自增ID
         /// </summary>
         /// <param name="expression"></param>
-        /// <param name="condition"></param>
         /// <param name="timeout"></param>
         /// <returns></returns>
         public long InsertReturnId(Expression<Func<T, T>> expression, int? timeout = null)
@@ -585,6 +759,9 @@ namespace PoJun.Dapper.Repository.MySql
                 return conn.ExecuteScalar<long>(sql, _param, commandTimeout: timeout);
             }
         }
+        /// <summary>
+        /// 
+        /// </summary>
         public async Task<int> InsertAsync(Expression<Func<T, T>> expression, int? timeout = null)
         {
             using (IDbConnection conn = new MySqlConnection(ConnectionString))
@@ -598,7 +775,6 @@ namespace PoJun.Dapper.Repository.MySql
         /// 新增并返回自增ID
         /// </summary>
         /// <param name="expression"></param>
-        /// <param name="condition"></param>
         /// <param name="timeout"></param>
         /// <returns></returns>
         public async Task<long> InsertReturnIdAsync(Expression<Func<T, T>> expression, int? timeout = null)
@@ -610,6 +786,9 @@ namespace PoJun.Dapper.Repository.MySql
                 return await conn.ExecuteScalarAsync<long>(sql, _param, commandTimeout: timeout);
             }
         }
+        /// <summary>
+        /// 
+        /// </summary>
         public int Insert(T entity, int? timeout = null)
         {
             using (IDbConnection conn = new MySqlConnection(ConnectionString))
@@ -618,6 +797,9 @@ namespace PoJun.Dapper.Repository.MySql
                 return conn.Execute(sql, entity, commandTimeout: timeout);
             }
         }
+        /// <summary>
+        /// 
+        /// </summary>
         public async Task<int> InsertAsync(T entity, int? timeout = null)
         {
             using (IDbConnection conn = new MySqlConnection(ConnectionString))
@@ -631,7 +813,6 @@ namespace PoJun.Dapper.Repository.MySql
         /// 新增并返回自增ID
         /// </summary>
         /// <param name="entity"></param>
-        /// <param name="condition"></param>
         /// <param name="timeout"></param>
         /// <returns></returns>
         public long InsertReturnId(T entity, int? timeout = null)
@@ -648,7 +829,6 @@ namespace PoJun.Dapper.Repository.MySql
         /// 新增并返回自增ID
         /// </summary>
         /// <param name="entity"></param>
-        /// <param name="condition"></param>
         /// <param name="timeout"></param>
         /// <returns></returns>
         public async Task<long> InsertReturnIdAsync(T entity, int? timeout = null)
@@ -660,6 +840,9 @@ namespace PoJun.Dapper.Repository.MySql
                 return await conn.ExecuteScalarAsync<long>(sql, entity, commandTimeout: timeout);
             }
         }
+        /// <summary>
+        /// 
+        /// </summary>
         public int Insert(IEnumerable<T> entitys, int? timeout = null)
         {
             using (IDbConnection conn = new MySqlConnection(ConnectionString))
@@ -668,6 +851,9 @@ namespace PoJun.Dapper.Repository.MySql
                 return conn.Execute(sql, entitys, commandTimeout: timeout);
             }
         }
+        /// <summary>
+        /// 
+        /// </summary>
         public async Task<int> InsertAsync(IEnumerable<T> entitys, int? timeout = null)
         {
             using (IDbConnection conn = new MySqlConnection(ConnectionString))
@@ -676,6 +862,9 @@ namespace PoJun.Dapper.Repository.MySql
                 return await conn.ExecuteAsync(sql, entitys, commandTimeout: timeout);
             }
         }
+        /// <summary>
+        /// 
+        /// </summary>
         public int Update(int? timeout = null)
         {
             using (IDbConnection conn = new MySqlConnection(ConnectionString))
@@ -686,6 +875,9 @@ namespace PoJun.Dapper.Repository.MySql
                 return conn.Execute(sql, _param, commandTimeout: timeout);
             }
         }
+        /// <summary>
+        /// 
+        /// </summary>
         public async Task<int> UpdateAsync(int? timeout = null)
         {
             using (IDbConnection conn = new MySqlConnection(ConnectionString))
@@ -696,6 +888,9 @@ namespace PoJun.Dapper.Repository.MySql
                 return await conn.ExecuteAsync(sql, _param, commandTimeout: timeout);
             }
         }
+        /// <summary>
+        /// 
+        /// </summary>
         public int Update(T entity, int? timeout = null)
         {
             using (IDbConnection conn = new MySqlConnection(ConnectionString))
@@ -704,6 +899,9 @@ namespace PoJun.Dapper.Repository.MySql
                 return conn.Execute(sql, entity, commandTimeout: timeout);
             }
         }
+        /// <summary>
+        /// 
+        /// </summary>
         public int Update(Expression<Func<T, T>> expression, int? timeout = null)
         {
             using (IDbConnection conn = new MySqlConnection(ConnectionString))
@@ -712,6 +910,9 @@ namespace PoJun.Dapper.Repository.MySql
                 return conn.Execute(sql, _param, commandTimeout: timeout);
             }
         }
+        /// <summary>
+        /// 
+        /// </summary>
         public async Task<int> UpdateAsync(Expression<Func<T, T>> expression, int? timeout = null)
         {
             using (IDbConnection conn = new MySqlConnection(ConnectionString))
@@ -720,6 +921,9 @@ namespace PoJun.Dapper.Repository.MySql
                 return await conn.ExecuteAsync(sql, _param, commandTimeout: timeout);
             }
         }
+        /// <summary>
+        /// 
+        /// </summary>
         public async Task<int> UpdateAsync(T entity, int? timeout = null)
         {
             using (IDbConnection conn = new MySqlConnection(ConnectionString))
@@ -728,6 +932,9 @@ namespace PoJun.Dapper.Repository.MySql
                 return await conn.ExecuteAsync(sql, entity, commandTimeout: timeout);
             }
         }
+        /// <summary>
+        /// 
+        /// </summary>
         public int Update(IEnumerable<T> entitys, int? timeout = null)
         {
             using (IDbConnection conn = new MySqlConnection(ConnectionString))
@@ -736,6 +943,9 @@ namespace PoJun.Dapper.Repository.MySql
                 return conn.Execute(sql, entitys, commandTimeout: timeout);
             }
         }
+        /// <summary>
+        /// 
+        /// </summary>
         public async Task<int> UpdateAsync(IEnumerable<T> entitys, int? timeout = null)
         {
             using (IDbConnection conn = new MySqlConnection(ConnectionString))
@@ -744,32 +954,50 @@ namespace PoJun.Dapper.Repository.MySql
                 return await conn.ExecuteAsync(sql, entitys, commandTimeout: timeout);
             }
         }
+        /// <summary>
+        /// 
+        /// </summary>
         public T Single(string columns = null, bool buffered = true, int? timeout = null)
         {
             Take(1);
             return Select(columns, buffered, timeout).SingleOrDefault();
         }
+        /// <summary>
+        /// 
+        /// </summary>
         public async Task<T> SingleAsync(string columns = null, int? timeout = null)
         {
             Take(1);
             return (await SelectAsync(columns, timeout)).SingleOrDefault();
         }
+        /// <summary>
+        /// 
+        /// </summary>
         public TResult Single<TResult>(string columns = null, bool buffered = true, int? timeout = null)
         {
             Take(1);
             return Select<TResult>(columns, buffered, timeout).SingleOrDefault();
         }
+        /// <summary>
+        /// 
+        /// </summary>
         public async Task<TResult> SingleAsync<TResult>(string columns = null, int? timeout = null)
         {
             Take(1);
             return (await SelectAsync<TResult>(columns, timeout)).SingleOrDefault();
         }
+        /// <summary>
+        /// 
+        /// </summary>
         public TResult Single<TResult>(Expression<Func<T, TResult>> columns, bool buffered = true, int? timeout = null)
         {
             var columnstr = string.Join(",",
                 ExpressionUtil.BuildColumns(columns, _param, _prefix).Select(s => string.Format("{0} AS {1}", s.Value, s.Key)));
             return Single<TResult>(columnstr, buffered, timeout);
         }
+        /// <summary>
+        /// 
+        /// </summary>
         public Task<TResult> SingleAsync<TResult>(Expression<Func<T, TResult>> columns, int? timeout = null)
         {
             var columnstr = string.Join(",",
@@ -778,6 +1006,9 @@ namespace PoJun.Dapper.Repository.MySql
         }
 
 
+        /// <summary>
+        /// 
+        /// </summary>
         public IEnumerable<T> Select(string colums = null, bool buffered = true, int? timeout = null)
         {
             if (colums != null)
@@ -792,6 +1023,9 @@ namespace PoJun.Dapper.Repository.MySql
             }
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
         public async Task<IEnumerable<T>> SelectAsync(string colums = null, int? timeout = null)
         {
             if (colums != null)
@@ -805,6 +1039,9 @@ namespace PoJun.Dapper.Repository.MySql
             }
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
         public IEnumerable<TResult> Select<TResult>(string columns = null, bool buffered = true, int? timeout = null)
         {
             if (columns != null)
@@ -817,6 +1054,9 @@ namespace PoJun.Dapper.Repository.MySql
                 return conn.Query<TResult>(sql, _param, buffered: buffered, commandTimeout: timeout);
             }
         }
+        /// <summary>
+        /// 
+        /// </summary>
         public async Task<IEnumerable<TResult>> SelectAsync<TResult>(string columns = null, int? timeout = null)
         {
             if (columns != null)
@@ -829,18 +1069,27 @@ namespace PoJun.Dapper.Repository.MySql
                 return await conn.QueryAsync<TResult>(sql, _param, commandTimeout: timeout);
             }
         }
+        /// <summary>
+        /// 
+        /// </summary>
         public IEnumerable<TResult> Select<TResult>(Expression<Func<T, TResult>> columns, bool buffered = true, int? timeout = null)
         {
             var columstr = string.Join(",",
                 ExpressionUtil.BuildColumns(columns, _param, _prefix).Select(s => string.Format("{0} AS {1}", s.Value, s.Key)));
             return Select<TResult>(columstr, buffered, timeout);
         }
+        /// <summary>
+        /// 
+        /// </summary>
         public Task<IEnumerable<TResult>> SelectAsync<TResult>(Expression<Func<T, TResult>> columns, int? timeout = null)
         {
             var columstr = string.Join(",",
                 ExpressionUtil.BuildColumns(columns, _param, _prefix).Select(s => string.Format("{0} AS {1}", s.Value, s.Key)));
             return SelectAsync<TResult>(columstr, timeout);
         }
+        /// <summary>
+        /// 
+        /// </summary>
         public long Count(string columns = null, int? timeout = null)
         {
             if (columns != null)
@@ -853,6 +1102,9 @@ namespace PoJun.Dapper.Repository.MySql
                 return conn.ExecuteScalar<long>(sql, _param, commandTimeout: timeout);
             }
         }
+        /// <summary>
+        /// 
+        /// </summary>
         public async Task<long> CountAsync(string columns = null, int? timeout = null)
         {
             if (columns != null)
@@ -865,14 +1117,23 @@ namespace PoJun.Dapper.Repository.MySql
                 return await conn.ExecuteScalarAsync<long>(sql, _param, commandTimeout: timeout);
             }
         }
+        /// <summary>
+        /// 
+        /// </summary>
         public long Count<TResult>(Expression<Func<T, TResult>> expression, int? timeout = null)
         {
             return Count(string.Join(",", ExpressionUtil.BuildColumns(expression, _param, _prefix).Select(s => s.Value)), timeout);
         }
+        /// <summary>
+        /// 
+        /// </summary>
         public Task<long> CountAsync<TResult>(Expression<Func<T, TResult>> expression, int? timeout = null)
         {
             return CountAsync(string.Join(",", ExpressionUtil.BuildColumns(expression, _param, _prefix).Select(s => s.Value)), timeout);
         }
+        /// <summary>
+        /// 
+        /// </summary>
         public bool Exists(int? timeout = null)
         {
             using (IDbConnection conn = new MySqlConnection(ConnectionString))
@@ -881,6 +1142,9 @@ namespace PoJun.Dapper.Repository.MySql
                 return conn.ExecuteScalar<int>(sql, _param, commandTimeout: timeout) > 0;
             }
         }
+        /// <summary>
+        /// 
+        /// </summary>
         public async Task<bool> ExistsAsync(int? timeout = null)
         {
             using (IDbConnection conn = new MySqlConnection(ConnectionString))
@@ -889,6 +1153,9 @@ namespace PoJun.Dapper.Repository.MySql
                 return await conn.ExecuteScalarAsync<int>(sql, _param, commandTimeout: timeout) > 0;
             }
         }
+        /// <summary>
+        /// 
+        /// </summary>
         public TResult Sum<TResult>(Expression<Func<T, TResult>> expression, int? timeout = null)
         {
             var column = ExpressionUtil.BuildExpression(expression, _param, _prefix);
@@ -899,6 +1166,9 @@ namespace PoJun.Dapper.Repository.MySql
                 return conn.ExecuteScalar<TResult>(sql, _param, commandTimeout: timeout);
             }
         }
+        /// <summary>
+        /// 
+        /// </summary>
         public async Task<TResult> SumAsync<TResult>(Expression<Func<T, TResult>> expression, int? timeout = null)
         {
             var column = ExpressionUtil.BuildExpression(expression, _param, _prefix);
@@ -936,24 +1206,72 @@ namespace PoJun.Dapper.Repository.MySql
             return this;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
         public Dictionary<string, object> _param { get; set; }
+        /// <summary>
+        /// 
+        /// </summary>
         public StringBuilder _columnBuffer = new StringBuilder();
+        /// <summary>
+        /// 
+        /// </summary>
         public List<string> _filters = new List<string>();
+        /// <summary>
+        /// 
+        /// </summary>
         public StringBuilder _setBuffer = new StringBuilder();
+        /// <summary>
+        /// 
+        /// </summary>
         public StringBuilder _havingBuffer = new StringBuilder();
+        /// <summary>
+        /// 
+        /// </summary>
         public StringBuilder _whereBuffer = new StringBuilder();
+        /// <summary>
+        /// 
+        /// </summary>
         public StringBuilder _groupBuffer = new StringBuilder();
+        /// <summary>
+        /// 
+        /// </summary>
         public StringBuilder _orderBuffer = new StringBuilder();
+        /// <summary>
+        /// 
+        /// </summary>
         public StringBuilder _distinctBuffer = new StringBuilder();
+        /// <summary>
+        /// 
+        /// </summary>
         public StringBuilder _countBuffer = new StringBuilder();
+        /// <summary>
+        /// 
+        /// </summary>
         public StringBuilder _sumBuffer = new StringBuilder();
+        /// <summary>
+        /// 
+        /// </summary>
         public StringBuilder _lock = new StringBuilder();
+        /// <summary>
+        /// 
+        /// </summary>
         public EntityTable _table = EntityUtil.GetTable<T>();
+        /// <summary>
+        /// 
+        /// </summary>
         public int? pageIndex = null;
+        /// <summary>
+        /// 
+        /// </summary>
         public int? pageCount = null;
         #endregion
 
         #region build
+        /// <summary>
+        /// 
+        /// </summary>
         public string BuildInsert(Expression expression = null)
         {
             if (expression == null)
@@ -974,6 +1292,9 @@ namespace PoJun.Dapper.Repository.MySql
                 return sql;
             }
         }
+        /// <summary>
+        /// 
+        /// </summary>
         public string BuildUpdate(bool allColumn = true)
         {
             if (allColumn)
@@ -997,6 +1318,9 @@ namespace PoJun.Dapper.Repository.MySql
             }
 
         }
+        /// <summary>
+        /// 
+        /// </summary>
         public string BuildUpdate(Expression expression)
         {
             var keyColumn = _table.Columns.Find(f => f.ColumnKey == ColumnKey.Primary);
@@ -1008,6 +1332,9 @@ namespace PoJun.Dapper.Repository.MySql
                     );
             return sql;
         }
+        /// <summary>
+        /// 
+        /// </summary>
         public string BuildDelete()
         {
             var sql = string.Format("DELETE FROM {0}{1}",
@@ -1015,6 +1342,9 @@ namespace PoJun.Dapper.Repository.MySql
                 _whereBuffer.Length > 0 ? string.Format(" WHERE {0}", _whereBuffer) : "");
             return sql;
         }
+        /// <summary>
+        /// 
+        /// </summary>
         public string BuildSelect()
         {
             var sqlBuffer = new StringBuilder("SELECT");
@@ -1058,6 +1388,9 @@ namespace PoJun.Dapper.Repository.MySql
             var sql = sqlBuffer.ToString();
             return sql;
         }
+        /// <summary>
+        /// 
+        /// </summary>
         public string BuildCount()
         {
             var sqlBuffer = new StringBuilder("SELECT");
@@ -1104,6 +1437,9 @@ namespace PoJun.Dapper.Repository.MySql
                 return sqlBuffer.ToString();
             }
         }
+        /// <summary>
+        /// 
+        /// </summary>
         public string BuildExists()
         {
             var sqlBuffer = new StringBuilder();
@@ -1124,6 +1460,9 @@ namespace PoJun.Dapper.Repository.MySql
             var sql = string.Format("SELECT EXISTS({0})", sqlBuffer);
             return sql;
         }
+        /// <summary>
+        /// 
+        /// </summary>
         public string BuildSum()
         {
             var sqlBuffer = new StringBuilder();

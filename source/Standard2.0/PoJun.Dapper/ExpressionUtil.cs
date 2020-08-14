@@ -26,6 +26,10 @@ namespace PoJun.Dapper
         #endregion
 
         #region override
+
+        /// <summary>
+        /// 
+        /// </summary>
         protected override Expression VisitMember(MemberExpression node)
         {
             if (node.Expression != null && node.Expression.NodeType == ExpressionType.Parameter)
@@ -38,6 +42,10 @@ namespace PoJun.Dapper
             }
             return node;
         }
+
+        /// <summary>
+        /// 
+        /// </summary>
         protected override Expression VisitMethodCall(MethodCallExpression node)
         {
             if (node.Method.DeclaringType == typeof(Operator))
@@ -113,6 +121,10 @@ namespace PoJun.Dapper
             }
             return node;
         }
+
+        /// <summary>
+        /// 
+        /// </summary>
         protected override Expression VisitBinary(BinaryExpression node)
         {
             _build.Append("(");
@@ -131,16 +143,28 @@ namespace PoJun.Dapper
             _build.Append(")");
             return node;
         }
+
+        /// <summary>
+        /// 
+        /// </summary>
         protected override Expression VisitNewArray(NewArrayExpression node)
         {
             SetValue(node);
             return node;
         }
+
+        /// <summary>
+        /// 
+        /// </summary>
         protected override Expression VisitNew(NewExpression node)
         {
             SetValue(node);
             return node;
         }
+
+        /// <summary>
+        /// 
+        /// </summary>
         protected override Expression VisitUnary(UnaryExpression node)
         {
             if (node.NodeType == ExpressionType.Not)
@@ -154,6 +178,10 @@ namespace PoJun.Dapper
             }
             return node;
         }
+
+        /// <summary>
+        /// 
+        /// </summary>
         protected override Expression VisitConstant(ConstantExpression node)
         {
             if (node.Value == null)
@@ -196,6 +224,9 @@ namespace PoJun.Dapper
         #endregion
 
         #region private
+        /// <summary>
+        /// 
+        /// </summary>
         private static string GetColumnName(Type type, string name, bool singleTable)
         {
             var columnName = EntityUtil.GetColumn(type, f => f.CSharpName == name)?.ColumnName ?? name;
@@ -206,6 +237,9 @@ namespace PoJun.Dapper
             }
             return columnName;
         }
+        /// <summary>
+        /// 
+        /// </summary>
         public void SetName(MemberExpression expression)
         {
             var name = expression.Member.Name;
@@ -213,6 +247,9 @@ namespace PoJun.Dapper
             _build.Append(columnName);
             _paramName = name;
         }
+        /// <summary>
+        /// 
+        /// </summary>
         public void SetValue(Expression expression)
         {
             var value = GetValue(expression);
@@ -290,6 +327,9 @@ namespace PoJun.Dapper
         #endregion
 
         #region public
+        /// <summary>
+        /// 
+        /// </summary>
         public static string BuildExpression(Expression expression, Dictionary<string, object> param, string prefix = "@", bool singleTable = true)
         {
             var visitor = new ExpressionUtil
@@ -301,6 +341,9 @@ namespace PoJun.Dapper
             visitor.Visit(expression);
             return visitor._build.ToString();
         }
+        /// <summary>
+        /// 
+        /// </summary>
         public static Dictionary<string, string> BuildColumns(Expression expression, Dictionary<string, object> param, string prefix, bool singleTable = true)
         {
             var columns = new Dictionary<string, string>();
@@ -423,6 +466,10 @@ namespace PoJun.Dapper
             }
             return columns;
         }
+
+        /// <summary>
+        /// 
+        /// </summary>
         public static Dictionary<string, string> BuildColumn(Expression expression, Dictionary<string, object> param, string prefix, bool singleTable = true)
         {
             if (expression is LambdaExpression)
@@ -445,6 +492,10 @@ namespace PoJun.Dapper
                 return column;
             }
         }
+
+        /// <summary>
+        /// 
+        /// </summary>
         public static Dictionary<string, string> BuildColumnAndValues(Expression expression, Dictionary<string, object> param, string prefix)
         {
             var columns = new Dictionary<string, string>();
@@ -471,6 +522,10 @@ namespace PoJun.Dapper
             }
             return columns;
         }
+
+        /// <summary>
+        /// 
+        /// </summary>
         public static object GetValue(Expression expression)
         {
             if ((expression is UnaryExpression unaryExpression) && unaryExpression.NodeType == ExpressionType.Convert)

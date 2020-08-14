@@ -97,7 +97,7 @@ namespace PoJun.Dapper.IRepository
         /// <param name="param">参数</param>
         /// <param name="commandTimeout">超时时间</param>
         /// <returns></returns>
-        Tuple<IEnumerable<T>, int> ExecuteToPaginationProcdeure(DynamicParameters param = null, int? commandTimeout = null);
+        Tuple<IEnumerable<T>, int> ExecuteToPaginationProcdeure<T>(DynamicParameters param = null, int? commandTimeout = null);
 
         /// <summary>
         /// 执行分页存储过程（Procdeure）【异步】
@@ -106,7 +106,7 @@ namespace PoJun.Dapper.IRepository
         /// <param name="param">参数</param>
         /// <param name="commandTimeout">超时时间</param>
         /// <returns></returns>
-        Task<Tuple<IEnumerable<T>, int>> ExecuteToPaginationProcdeureAsync(DynamicParameters param = null, int? commandTimeout = null);
+        Task<Tuple<IEnumerable<T>, int>> ExecuteToPaginationProcdeureAsync<T>(DynamicParameters param = null, int? commandTimeout = null);
 
         /// <summary>
         /// 执行存储过程（Procdeure）【同步】
@@ -116,7 +116,7 @@ namespace PoJun.Dapper.IRepository
         /// <param name="param">参数</param>
         /// <param name="commandTimeout">超时时间</param>
         /// <returns></returns>
-        IEnumerable<T> ExecuteToProcdeure(string porcdeureName, object param = null, int? commandTimeout = null);
+        IEnumerable<T> ExecuteToProcdeure<T>(string porcdeureName, object param = null, int? commandTimeout = null);
 
         /// <summary>
         /// 执行存储过程（Procdeure）【异步】
@@ -126,7 +126,7 @@ namespace PoJun.Dapper.IRepository
         /// <param name="param">参数</param>
         /// <param name="commandTimeout">超时时间</param>
         /// <returns></returns>
-        Task<IEnumerable<T>> ExecuteToProcdeureAsync(string porcdeureName, object param = null, int? commandTimeout = null);
+        Task<IEnumerable<T>> ExecuteToProcdeureAsync<T>(string porcdeureName, object param = null, int? commandTimeout = null);
 
         /// <summary>
         /// 执行查询【同步】
@@ -136,7 +136,7 @@ namespace PoJun.Dapper.IRepository
         /// <param name="param">参数</param>
         /// <param name="commandTimeout">超时时间</param>
         /// <returns></returns>
-        IEnumerable<T> Query(string sql, object param = null, int? commandTimeout = null);
+        IEnumerable<T> Query<T>(string sql, object param = null, int? commandTimeout = null);
 
         /// <summary>
         /// 执行查询【异步】
@@ -146,7 +146,29 @@ namespace PoJun.Dapper.IRepository
         /// <param name="param">参数</param>
         /// <param name="commandTimeout">超时时间</param>
         /// <returns></returns>
-        Task<IEnumerable<T>> QueryAsync(string sql, object param = null, int? commandTimeout = null);
+        Task<IEnumerable<T>> QueryAsync<T>(string sql, object param = null, int? commandTimeout = null);
+
+        /// <summary>
+        /// 分页查询【同步】
+        /// </summary>
+        /// <typeparam name="T">返回结果的类型</typeparam>
+        /// <param name="sql">查询数据的SQL(请在select 后面加上 SQL_CALC_FOUND_ROWS 关键字)</param>
+        /// <param name="totalSql">查询数据数量的SQL(默认值：select FOUND_ROWS() AS Count)</param>
+        /// <param name="param">参数</param>
+        /// <param name="commandTimeout">超时时间</param>
+        /// <returns>Data：查询出的数据；Count：当前查询条件下数据的数量</returns>
+        (IEnumerable<T> Data, long Count) QueryPageList<T>(string sql, string totalSql = "select FOUND_ROWS() AS Count", object param = null, int? commandTimeout = null);
+
+        /// <summary>
+        /// 分页查询【异步】
+        /// </summary>
+        /// <typeparam name="T">返回结果的类型</typeparam>
+        /// <param name="sql">查询数据的SQL(请在select 后面加上 SQL_CALC_FOUND_ROWS 关键字)</param>
+        /// <param name="totalSql">查询数据数量的SQL(默认值：select FOUND_ROWS() AS Count)</param>
+        /// <param name="param">参数</param>
+        /// <param name="commandTimeout">超时时间</param>
+        /// <returns>Data：查询出的数据；Count：当前查询条件下数据的数量</returns>
+        Task<(IEnumerable<T> Data, long Count)> QueryPageListAsync<T>(string sql, string totalSql = "select FOUND_ROWS() AS Count", object param = null, int? commandTimeout = null);
 
         #endregion
 
@@ -157,81 +179,273 @@ namespace PoJun.Dapper.IRepository
         /// </summary>
         /// <returns></returns>
         IBaseRepository<T> initLinq();
-
+        /// <summary>
+        /// 
+        /// </summary>
         string BuildInsert(Expression expression = null);
-
+        /// <summary>
+        /// 
+        /// </summary>
         string BuildUpdate(bool allColumn = true);
-
+        /// <summary>
+        /// 
+        /// </summary>
         string BuildUpdate(Expression expression);
-
+        /// <summary>
+        /// 
+        /// </summary>
         string BuildDelete();
-
+        /// <summary>
+        /// 
+        /// </summary>
         string BuildSelect();
-
+        /// <summary>
+        /// 
+        /// </summary>
         string BuildCount();
-
+        /// <summary>
+        /// 
+        /// </summary>
         string BuildExists();
-
+        /// <summary>
+        /// 
+        /// </summary>
         string BuildSum();
-
+        /// <summary>
+        /// 
+        /// </summary>
         IBaseRepository<T> Set<TResult>(Expression<Func<T, TResult>> column, ISubQuery subquery);
+        /// <summary>
+        /// 
+        /// </summary>
         IBaseRepository<T> Set<TResult>(Expression<Func<T, TResult>> column, TResult value);
+        /// <summary>
+        /// 
+        /// </summary>
         IBaseRepository<T> Set<TResult>(Expression<Func<T, TResult>> column, Expression<Func<T, TResult>> expression);
+        /// <summary>
+        /// 
+        /// </summary>
         IBaseRepository<T> GroupBy(string expression);
+        /// <summary>
+        /// 
+        /// </summary>
         IBaseRepository<T> GroupBy<TResult>(Expression<Func<T, TResult>> expression);
+        /// <summary>
+        /// 
+        /// </summary>
         IBaseRepository<T> Where(string expression);
+        /// <summary>
+        /// 
+        /// </summary>
         IBaseRepository<T> Where(Expression<Func<T, bool?>> expression);
+        /// <summary>
+        /// 
+        /// </summary>
         IBaseRepository<T> OrderBy(string orderBy);
+        /// <summary>
+        /// 
+        /// </summary>
         IBaseRepository<T> OrderBy<TResult>(Expression<Func<T, TResult>> expression);
+        /// <summary>
+        /// 
+        /// </summary>
         IBaseRepository<T> OrderByDescending<TResult>(Expression<Func<T, TResult>> expression);
+        /// <summary>
+        /// 
+        /// </summary>
         IBaseRepository<T> Skip(int index, int count);
+        /// <summary>
+        /// 
+        /// </summary>
         IBaseRepository<T> Take(int count);
+        /// <summary>
+        /// 
+        /// </summary>
         IBaseRepository<T> Page(int index, int count, out long total);
+        /// <summary>
+        /// 
+        /// </summary>
         IBaseRepository<T> Having(string expression);
+        /// <summary>
+        /// 
+        /// </summary>
         IBaseRepository<T> Having(Expression<Func<T, bool?>> expression);
+        /// <summary>
+        /// 
+        /// </summary>
         IBaseRepository<T> Filter<TResult>(Expression<Func<T, TResult>> columns);
+        /// <summary>
+        /// 
+        /// </summary>
         IBaseRepository<T> With(string lockType);
+        /// <summary>
+        /// 
+        /// </summary>
         IBaseRepository<T> With(LockType lockType);
+        /// <summary>
+        /// 
+        /// </summary>
         IBaseRepository<T> Distinct();
+        /// <summary>
+        /// 
+        /// </summary>
         T Single(string columns = null, bool buffered = true, int? timeout = null);
+        /// <summary>
+        /// 
+        /// </summary>
         Task<T> SingleAsync(string columns = null, int? timeout = null);
+        /// <summary>
+        /// 
+        /// </summary>
         TResult Single<TResult>(string columns = null, bool buffered = true, int? timeout = null);
+        /// <summary>
+        /// 
+        /// </summary>
         Task<TResult> SingleAsync<TResult>(string columns = null, int? timeout = null);
+        /// <summary>
+        /// 
+        /// </summary>
         TResult Single<TResult>(Expression<Func<T, TResult>> columns, bool buffered = true, int? timeout = null);
+        /// <summary>
+        /// 
+        /// </summary>
         Task<TResult> SingleAsync<TResult>(Expression<Func<T, TResult>> columns, int? timeout = null);
+        /// <summary>
+        /// 
+        /// </summary>
         IEnumerable<T> Select(string colums = null, bool buffered = true, int? timeout = null);
+        /// <summary>
+        /// 
+        /// </summary>
         Task<IEnumerable<T>> SelectAsync(string colums = null, int? timeout = null);
+        /// <summary>
+        /// 
+        /// </summary>
         IEnumerable<TResult> Select<TResult>(string colums = null, bool buffered = true, int? timeout = null);
+        /// <summary>
+        /// 
+        /// </summary>
         Task<IEnumerable<TResult>> SelectAsync<TResult>(string colums = null, int? timeout = null);
+        /// <summary>
+        /// 
+        /// </summary>
         IEnumerable<TResult> Select<TResult>(Expression<Func<T, TResult>> columns, bool buffered = true, int? timeout = null);
+        /// <summary>
+        /// 
+        /// </summary>
         Task<IEnumerable<TResult>> SelectAsync<TResult>(Expression<Func<T, TResult>> columns, int? timeout = null);
+        /// <summary>
+        /// 
+        /// </summary>
         int Insert(T entity, int? timeout = null);
+        /// <summary>
+        /// 
+        /// </summary>
         int Insert(Expression<Func<T, T>> expression, int? timeout = null);
+        /// <summary>
+        /// 
+        /// </summary>
         Task<int> InsertAsync(Expression<Func<T, T>> expression, int? timeout = null);
+        /// <summary>
+        /// 
+        /// </summary>
         long InsertReturnId(Expression<Func<T, T>> expression, int? timeout = null);
+        /// <summary>
+        /// 
+        /// </summary>
         Task<long> InsertReturnIdAsync(Expression<Func<T, T>> expression, int? timeout = null);
+        /// <summary>
+        /// 
+        /// </summary>
         Task<int> InsertAsync(T entity, int? timeout = null);
+        /// <summary>
+        /// 
+        /// </summary>
         long InsertReturnId(T entity, int? timeout = null);
+        /// <summary>
+        /// 
+        /// </summary>
         Task<long> InsertReturnIdAsync(T entity, int? timeout = null);
+        /// <summary>
+        /// 
+        /// </summary>
         int Insert(IEnumerable<T> entitys, int? timeout = null);
+        /// <summary>
+        /// 
+        /// </summary>
         Task<int> InsertAsync(IEnumerable<T> entitys, int? timeout = null);
+        /// <summary>
+        /// 
+        /// </summary>
         int Update(int? timeout = null);
+        /// <summary>
+        /// 
+        /// </summary>
         Task<int> UpdateAsync(int? timeout = null);
+        /// <summary>
+        /// 
+        /// </summary>
         int Update(T entity, int? timeout = null);
+        /// <summary>
+        /// 
+        /// </summary>
         int Update(Expression<Func<T, T>> expression, int? timeout = null);
+        /// <summary>
+        /// 
+        /// </summary>
         Task<int> UpdateAsync(Expression<Func<T, T>> expression, int? timeout = null);
+        /// <summary>
+        /// 
+        /// </summary>
         Task<int> UpdateAsync(T entity, int? timeout = null);
+        /// <summary>
+        /// 
+        /// </summary>
         int Update(IEnumerable<T> entitys, int? timeout = null);
+        /// <summary>
+        /// 
+        /// </summary>
         Task<int> UpdateAsync(IEnumerable<T> entitys, int? timeout = null);
+        /// <summary>
+        /// 
+        /// </summary>
         int Delete(int? timeout = null);
+        /// <summary>
+        /// 
+        /// </summary>
         Task<int> DeleteAsync(int? timeout = null);
+        /// <summary>
+        /// 
+        /// </summary>
         bool Exists(int? timeout = null);
+        /// <summary>
+        /// 
+        /// </summary>
         Task<bool> ExistsAsync(int? timeout = null);
+        /// <summary>
+        /// 
+        /// </summary>
         long Count(string columns = null, int? timeout = null);
+        /// <summary>
+        /// 
+        /// </summary>
         Task<long> CountAsync(string columns = null, int? timeout = null);
+        /// <summary>
+        /// 
+        /// </summary>
         long Count<TResult>(Expression<Func<T, TResult>> expression, int? timeout = null);
+        /// <summary>
+        /// 
+        /// </summary>
         Task<long> CountAsync<TResult>(Expression<Func<T, TResult>> expression, int? timeout = null);
+        /// <summary>
+        /// 
+        /// </summary>
         TResult Sum<TResult>(Expression<Func<T, TResult>> expression, int? timeout = null);
+        /// <summary>
+        /// 
+        /// </summary>
         Task<TResult> SumAsync<TResult>(Expression<Func<T, TResult>> expression, int? timeout = null);
 
         #endregion

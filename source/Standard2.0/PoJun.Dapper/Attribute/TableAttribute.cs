@@ -14,7 +14,15 @@ namespace PoJun.Dapper
 	[AttributeUsage(AttributeTargets.Class)]
     public class TableAttribute : Attribute
     {
+        /// <summary>
+        /// 
+        /// </summary>
         public string Name { get; set; }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="name"></param>
         public TableAttribute(string name = null)
         {
             Name = name;

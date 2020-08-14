@@ -13,6 +13,9 @@ namespace PoJun.Dapper
 	/// </summary>
 	public enum ColumnKey
     {
+        /// <summary>
+        /// 
+        /// </summary>
         None,
 
         /// <summary>

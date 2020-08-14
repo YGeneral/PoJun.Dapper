@@ -261,7 +261,7 @@ namespace PoJun.Dapper.Repository.SqlServer
         /// <param name="param">参数</param>
         /// <param name="commandTimeout">超时时间</param>
         /// <returns></returns>
-        public Tuple<IEnumerable<T>, int> ExecuteToPaginationProcdeure(DynamicParameters param = null, int? commandTimeout = null)
+        public Tuple<IEnumerable<T>, int> ExecuteToPaginationProcdeure<T>(DynamicParameters param = null, int? commandTimeout = null)
         {
             using (IDbConnection conn = new SqlConnection(ConnectionString))
             {
@@ -282,7 +282,7 @@ namespace PoJun.Dapper.Repository.SqlServer
         /// <param name="param">参数</param>
         /// <param name="commandTimeout">超时时间</param>
         /// <returns></returns>
-        public async Task<Tuple<IEnumerable<T>, int>> ExecuteToPaginationProcdeureAsync(DynamicParameters param = null, int? commandTimeout = null)
+        public async Task<Tuple<IEnumerable<T>, int>> ExecuteToPaginationProcdeureAsync<T>(DynamicParameters param = null, int? commandTimeout = null)
         {
             using (IDbConnection conn = new SqlConnection(ConnectionString))
             {
@@ -306,7 +306,7 @@ namespace PoJun.Dapper.Repository.SqlServer
         /// <param name="param">参数</param>
         /// <param name="commandTimeout">超时时间</param>
         /// <returns></returns>
-        public IEnumerable<T> ExecuteToProcdeure(string porcdeureName, object param = null, int? commandTimeout = null)
+        public IEnumerable<T> ExecuteToProcdeure<T>(string porcdeureName, object param = null, int? commandTimeout = null)
         {
             using (IDbConnection conn = new SqlConnection(ConnectionString))
             {
@@ -326,7 +326,7 @@ namespace PoJun.Dapper.Repository.SqlServer
         /// <param name="param">参数</param>
         /// <param name="commandTimeout">超时时间</param>
         /// <returns></returns>
-        public async Task<IEnumerable<T>> ExecuteToProcdeureAsync(string porcdeureName, object param = null, int? commandTimeout = null)
+        public async Task<IEnumerable<T>> ExecuteToProcdeureAsync<T>(string porcdeureName, object param = null, int? commandTimeout = null)
         {
             using (IDbConnection conn = new SqlConnection(ConnectionString))
             {
@@ -349,7 +349,7 @@ namespace PoJun.Dapper.Repository.SqlServer
         /// <param name="param">参数</param>
         /// <param name="commandTimeout">超时时间</param>
         /// <returns></returns>
-        public IEnumerable<T> Query(string sql, object param = null, int? commandTimeout = null)
+        public IEnumerable<T> Query<T>(string sql, object param = null, int? commandTimeout = null)
         {
             using (IDbConnection conn = new SqlConnection(ConnectionString))
             {
@@ -369,7 +369,7 @@ namespace PoJun.Dapper.Repository.SqlServer
         /// <param name="param">参数</param>
         /// <param name="commandTimeout">超时时间</param>
         /// <returns></returns>
-        public async Task<IEnumerable<T>> QueryAsync(string sql, object param = null, int? commandTimeout = null)
+        public async Task<IEnumerable<T>> QueryAsync<T>(string sql, object param = null, int? commandTimeout = null)
         {
             using (IDbConnection conn = new SqlConnection(ConnectionString))
             {
@@ -382,16 +382,56 @@ namespace PoJun.Dapper.Repository.SqlServer
 
         #endregion
 
+        /// <summary>
+        /// 未实现方法
+        /// </summary>
+        /// <typeparam name="T">返回结果的类型</typeparam>
+        /// <param name="sql"></param>
+        /// <param name="totalSql"></param>
+        /// <param name="param"></param>
+        /// <param name="commandTimeout"></param>
+        /// <returns></returns>
+        public (IEnumerable<T> Data, long Count) QueryPageList<T>(string sql, string totalSql = "select FOUND_ROWS() AS Count", object param = null, int? commandTimeout = null)
+        {
+            throw new NotImplementedException();
+        }
+
+        /// <summary>
+        /// 未实现方法
+        /// </summary>
+        /// <typeparam name="T">返回结果的类型</typeparam>
+        /// <param name="sql"></param>
+        /// <param name="totalSql"></param>
+        /// <param name="param"></param>
+        /// <param name="commandTimeout"></param>
+        /// <returns></returns>
+        public Task<(IEnumerable<T> Data, long Count)> QueryPageListAsync<T>(string sql, string totalSql = "select FOUND_ROWS() AS Count", object param = null, int? commandTimeout = null)
+        {
+            throw new NotImplementedException();
+        }
+
         #endregion
 
         #region Linq执行
 
         #region implement
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="lockType"></param>
+        /// <returns></returns>
         public IBaseRepository<T> With(string lockType)
         {
             _lock.Append(lockType);
             return this;
         }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="lockType"></param>
+        /// <returns></returns>
         public IBaseRepository<T> With(LockType lockType)
         {
             var temp = string.Empty;
@@ -405,16 +445,34 @@ namespace PoJun.Dapper.Repository.SqlServer
             }
             return this;
         }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
         public IBaseRepository<T> Distinct()
         {
             _distinctBuffer.Append("DISTINCT");
             return this;
         }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <typeparam name="TResult"></typeparam>
+        /// <param name="columns"></param>
+        /// <returns></returns>
         public IBaseRepository<T> Filter<TResult>(Expression<Func<T, TResult>> columns)
         {
             _filters.AddRange(ExpressionUtil.BuildColumns(columns, _param, _prefix).Select(s => s.Value));
             return this;
         }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="expression"></param>
+        /// <returns></returns>
         public IBaseRepository<T> GroupBy(string expression)
         {
             if (_groupBuffer.Length > 0)
@@ -424,21 +482,46 @@ namespace PoJun.Dapper.Repository.SqlServer
             _groupBuffer.Append(expression);
             return this;
         }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <typeparam name="TResult"></typeparam>
+        /// <param name="expression"></param>
+        /// <returns></returns>
         public IBaseRepository<T> GroupBy<TResult>(Expression<Func<T, TResult>> expression)
         {
             GroupBy(string.Join(",", ExpressionUtil.BuildColumns(expression, _param, _prefix).Select(s => s.Value)));
             return this;
         }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="expression"></param>
+        /// <returns></returns>
         public IBaseRepository<T> Having(string expression)
         {
             _havingBuffer.Append(expression);
             return this;
         }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="expression"></param>
+        /// <returns></returns>
         public IBaseRepository<T> Having(Expression<Func<T, bool?>> expression)
         {
             Having(string.Join(",", ExpressionUtil.BuildColumns(expression, _param, _prefix).Select(s => s.Value)));
             return this;
         }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="orderBy"></param>
+        /// <returns></returns>
         public IBaseRepository<T> OrderBy(string orderBy)
         {
             if (_orderBuffer.Length > 0)
@@ -448,16 +531,38 @@ namespace PoJun.Dapper.Repository.SqlServer
             _orderBuffer.Append(orderBy);
             return this;
         }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <typeparam name="TResult"></typeparam>
+        /// <param name="expression"></param>
+        /// <returns></returns>
         public IBaseRepository<T> OrderBy<TResult>(Expression<Func<T, TResult>> expression)
         {
             OrderBy(string.Join(",", ExpressionUtil.BuildColumns(expression, _param, _prefix).Select(s => string.Format("{0} ASC", s.Value))));
             return this;
         }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <typeparam name="TResult"></typeparam>
+        /// <param name="expression"></param>
+        /// <returns></returns>
         public IBaseRepository<T> OrderByDescending<TResult>(Expression<Func<T, TResult>> expression)
         {
             OrderBy(string.Join(",", ExpressionUtil.BuildColumns(expression, _param, _prefix).Select(s => string.Format("{0} DESC", s.Value))));
             return this;
         }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="index"></param>
+        /// <param name="count"></param>
+        /// <param name="total"></param>
+        /// <returns></returns>
         public IBaseRepository<T> Page(int index, int count, out long total)
         {
             total = 0;
@@ -465,6 +570,14 @@ namespace PoJun.Dapper.Repository.SqlServer
             total = Count();
             return this;
         }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <typeparam name="TResult"></typeparam>
+        /// <param name="column"></param>
+        /// <param name="subquery"></param>
+        /// <returns></returns>
         public IBaseRepository<T> Set<TResult>(Expression<Func<T, TResult>> column, ISubQuery subquery)
         {
             if (_setBuffer.Length > 0)
@@ -475,6 +588,14 @@ namespace PoJun.Dapper.Repository.SqlServer
             _setBuffer.AppendFormat("{0} = {1}", columns.Value, subquery.Build(_param, _prefix));
             return this;
         }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <typeparam name="TResult"></typeparam>
+        /// <param name="column"></param>
+        /// <param name="value"></param>
+        /// <returns></returns>
         public IBaseRepository<T> Set<TResult>(Expression<Func<T, TResult>> column, TResult value)
         {
             if (_setBuffer.Length > 0)
@@ -490,6 +611,14 @@ namespace PoJun.Dapper.Repository.SqlServer
             _setBuffer.AppendFormat("{0} = {1}", columns.Key, value);
             return this;
         }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <typeparam name="TResult"></typeparam>
+        /// <param name="column"></param>
+        /// <param name="value"></param>
+        /// <returns></returns>
         public IBaseRepository<T> Set<TResult>(Expression<Func<T, TResult>> column, Expression<Func<T, TResult>> value)
         {
             if (_setBuffer.Length > 0)
@@ -501,17 +630,36 @@ namespace PoJun.Dapper.Repository.SqlServer
             _setBuffer.AppendFormat("{0} = {1}", columnName, expression);
             return this;
         }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="index"></param>
+        /// <param name="count"></param>
+        /// <returns></returns>
         public IBaseRepository<T> Skip(int index, int count)
         {
             pageIndex = index;
             pageCount = count;
             return this;
         }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="count"></param>
+        /// <returns></returns>
         public IBaseRepository<T> Take(int count)
         {
             Skip(0, count);
             return this;
         }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="expression"></param>
+        /// <returns></returns>
         public IBaseRepository<T> Where(string expression)
         {
             if (_whereBuffer.Length > 0)
@@ -521,11 +669,23 @@ namespace PoJun.Dapper.Repository.SqlServer
             _whereBuffer.Append(expression);
             return this;
         }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="expression"></param>
+        /// <returns></returns>
         public IBaseRepository<T> Where(Expression<Func<T, bool?>> expression)
         {
             Where(ExpressionUtil.BuildExpression(expression, _param, _prefix));
             return this;
         }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="timeout"></param>
+        /// <returns></returns>
         public int Delete(int? timeout = null)
         {
             using (IDbConnection conn = new SqlConnection(ConnectionString))
@@ -534,6 +694,12 @@ namespace PoJun.Dapper.Repository.SqlServer
                 return conn.Execute(sql, _param, commandTimeout: timeout);
             }
         }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="timeout"></param>
+        /// <returns></returns>
         public async Task<int> DeleteAsync(int? timeout = null)
         {
             using (IDbConnection conn = new SqlConnection(ConnectionString))
@@ -542,6 +708,13 @@ namespace PoJun.Dapper.Repository.SqlServer
                 return await conn.ExecuteAsync(sql, _param, commandTimeout: timeout);
             }
         }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="expression"></param>
+        /// <param name="timeout"></param>
+        /// <returns></returns>
         public int Insert(Expression<Func<T, T>> expression, int? timeout = null)
         {
             using (IDbConnection conn = new SqlConnection(ConnectionString))
@@ -550,6 +723,13 @@ namespace PoJun.Dapper.Repository.SqlServer
                 return conn.Execute(sql, _param, commandTimeout: timeout);
             }
         }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="expression"></param>
+        /// <param name="timeout"></param>
+        /// <returns></returns>
         public long InsertReturnId(Expression<Func<T, T>> expression, int? timeout = null)
         {
             using (IDbConnection conn = new SqlConnection(ConnectionString))
@@ -559,6 +739,13 @@ namespace PoJun.Dapper.Repository.SqlServer
                 return conn.ExecuteScalar<long>(sql, _param, commandTimeout: timeout);
             }
         }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="expression"></param>
+        /// <param name="timeout"></param>
+        /// <returns></returns>
         public async Task<int> InsertAsync(Expression<Func<T, T>> expression, int? timeout = null)
         {
             using (IDbConnection conn = new SqlConnection(ConnectionString))
@@ -567,6 +754,13 @@ namespace PoJun.Dapper.Repository.SqlServer
                 return await conn.ExecuteAsync(sql, _param, commandTimeout: timeout);
             }
         }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="expression"></param>
+        /// <param name="timeout"></param>
+        /// <returns></returns>
         public async Task<long> InsertReturnIdAsync(Expression<Func<T, T>> expression, int? timeout = null)
         {
             using (IDbConnection conn = new SqlConnection(ConnectionString))
@@ -576,6 +770,13 @@ namespace PoJun.Dapper.Repository.SqlServer
                 return await conn.ExecuteScalarAsync<long>(sql, _param, commandTimeout: timeout);
             }
         }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="entity"></param>
+        /// <param name="timeout"></param>
+        /// <returns></returns>
         public int Insert(T entity, int? timeout = null)
         {
             using (IDbConnection conn = new SqlConnection(ConnectionString))
@@ -584,6 +785,13 @@ namespace PoJun.Dapper.Repository.SqlServer
                 return conn.Execute(sql, entity, commandTimeout: timeout);
             }
         }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="entity"></param>
+        /// <param name="timeout"></param>
+        /// <returns></returns>
         public async Task<int> InsertAsync(T entity, int? timeout = null)
         {
             using (IDbConnection conn = new SqlConnection(ConnectionString))
@@ -592,6 +800,13 @@ namespace PoJun.Dapper.Repository.SqlServer
                 return await conn.ExecuteAsync(sql, entity, commandTimeout: timeout);
             }
         }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="entity"></param>
+        /// <param name="timeout"></param>
+        /// <returns></returns>
         public long InsertReturnId(T entity, int? timeout = null)
         {
             using (IDbConnection conn = new SqlConnection(ConnectionString))
@@ -601,6 +816,13 @@ namespace PoJun.Dapper.Repository.SqlServer
                 return conn.ExecuteScalar<long>(sql, entity, commandTimeout: timeout);
             }
         }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="entity"></param>
+        /// <param name="timeout"></param>
+        /// <returns></returns>
         public async Task<long> InsertReturnIdAsync(T entity, int? timeout = null)
         {
             using (IDbConnection conn = new SqlConnection(ConnectionString))
@@ -610,6 +832,13 @@ namespace PoJun.Dapper.Repository.SqlServer
                 return await conn.ExecuteScalarAsync<long>(sql, entity, commandTimeout: timeout);
             }
         }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="entitys"></param>
+        /// <param name="timeout"></param>
+        /// <returns></returns>
         public int Insert(IEnumerable<T> entitys, int? timeout = null)
         {
             using (IDbConnection conn = new SqlConnection(ConnectionString))
@@ -618,6 +847,13 @@ namespace PoJun.Dapper.Repository.SqlServer
                 return conn.Execute(sql, entitys, commandTimeout: timeout);
             }
         }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="entitys"></param>
+        /// <param name="timeout"></param>
+        /// <returns></returns>
         public async Task<int> InsertAsync(IEnumerable<T> entitys, int? timeout = null)
         {
             using (IDbConnection conn = new SqlConnection(ConnectionString))
@@ -626,6 +862,12 @@ namespace PoJun.Dapper.Repository.SqlServer
                 return await conn.ExecuteAsync(sql, entitys, commandTimeout: timeout);
             }
         }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="timeout"></param>
+        /// <returns></returns>
         public int Update(int? timeout = null)
         {
             using (IDbConnection conn = new SqlConnection(ConnectionString))
@@ -633,9 +875,15 @@ namespace PoJun.Dapper.Repository.SqlServer
                 if (_setBuffer.Length < 1)
                     return 0;
                 var sql = BuildUpdate(false);
-                return conn.Execute(sql, _param, commandTimeout: timeout);
+                return conn.Execute(sql, _param, commandTimeout: timeout);            
             }
         }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="timeout"></param>
+        /// <returns></returns>
         public async Task<int> UpdateAsync(int? timeout = null)
         {
             using (IDbConnection conn = new SqlConnection(ConnectionString))
@@ -646,6 +894,13 @@ namespace PoJun.Dapper.Repository.SqlServer
                 return await conn.ExecuteAsync(sql, _param, commandTimeout: timeout);
             }
         }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="expression"></param>
+        /// <param name="timeout"></param>
+        /// <returns></returns>
         public int Update(Expression<Func<T, T>> expression, int? timeout = null)
         {
             using (IDbConnection conn = new SqlConnection(ConnectionString))
@@ -654,6 +909,13 @@ namespace PoJun.Dapper.Repository.SqlServer
                 return conn.Execute(sql, _param, commandTimeout: timeout);
             }
         }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="expression"></param>
+        /// <param name="timeout"></param>
+        /// <returns></returns>
         public async Task<int> UpdateAsync(Expression<Func<T, T>> expression, int? timeout = null)
         {
             using (IDbConnection conn = new SqlConnection(ConnectionString))
@@ -662,6 +924,13 @@ namespace PoJun.Dapper.Repository.SqlServer
                 return await conn.ExecuteAsync(sql, _param, commandTimeout: timeout);
             }
         }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="entity"></param>
+        /// <param name="timeout"></param>
+        /// <returns></returns>
         public int Update(T entity, int? timeout = null)
         {
             using (IDbConnection conn = new SqlConnection(ConnectionString))
@@ -670,6 +939,13 @@ namespace PoJun.Dapper.Repository.SqlServer
                 return conn.Execute(sql, entity, commandTimeout: timeout);
             }
         }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="entity"></param>
+        /// <param name="timeout"></param>
+        /// <returns></returns>
         public async Task<int> UpdateAsync(T entity, int? timeout = null)
         {
             using (IDbConnection conn = new SqlConnection(ConnectionString))
@@ -678,6 +954,13 @@ namespace PoJun.Dapper.Repository.SqlServer
                 return await conn.ExecuteAsync(sql, entity, commandTimeout: timeout);
             }
         }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="entitys"></param>
+        /// <param name="timeout"></param>
+        /// <returns></returns>
         public int Update(IEnumerable<T> entitys, int? timeout = null)
         {
             using (IDbConnection conn = new SqlConnection(ConnectionString))
@@ -686,6 +969,13 @@ namespace PoJun.Dapper.Repository.SqlServer
                 return conn.Execute(sql, entitys, commandTimeout: timeout);
             }
         }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="entitys"></param>
+        /// <param name="timeout"></param>
+        /// <returns></returns>
         public async Task<int> UpdateAsync(IEnumerable<T> entitys, int? timeout = null)
         {
             using (IDbConnection conn = new SqlConnection(ConnectionString))
@@ -694,26 +984,67 @@ namespace PoJun.Dapper.Repository.SqlServer
                 return await conn.ExecuteAsync(sql, entitys, commandTimeout: timeout);
             }
         }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="columns"></param>
+        /// <param name="buffered"></param>
+        /// <param name="timeout"></param>
+        /// <returns></returns>
         public T Single(string columns = null, bool buffered = true, int? timeout = null)
         {
             Take(1);
             return Select(columns, buffered, timeout).SingleOrDefault();
         }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="columns"></param>
+        /// <param name="timeout"></param>
+        /// <returns></returns>
         public async Task<T> SingleAsync(string columns = null, int? timeout = null)
         {
             Take(1);
             return (await SelectAsync(columns, timeout)).SingleOrDefault();
         }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <typeparam name="TResult"></typeparam>
+        /// <param name="columns"></param>
+        /// <param name="buffered"></param>
+        /// <param name="timeout"></param>
+        /// <returns></returns>
         public TResult Single<TResult>(string columns = null, bool buffered = true, int? timeout = null)
         {
             Take(1);
             return Select<TResult>(columns, buffered, timeout).SingleOrDefault();
         }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <typeparam name="TResult"></typeparam>
+        /// <param name="columns"></param>
+        /// <param name="timeout"></param>
+        /// <returns></returns>
         public async Task<TResult> SingleAsync<TResult>(string columns = null, int? timeout = null)
         {
             Take(1);
             return (await SelectAsync<TResult>(columns, timeout)).SingleOrDefault();
         }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <typeparam name="TResult"></typeparam>
+        /// <param name="columns"></param>
+        /// <param name="buffered"></param>
+        /// <param name="timeout"></param>
+        /// <returns></returns>
         public TResult Single<TResult>(Expression<Func<T, TResult>> columns, bool buffered = true, int? timeout = null)
         {
             _columns = ExpressionUtil.BuildColumns(columns, _param, _prefix);
@@ -722,6 +1053,14 @@ namespace PoJun.Dapper.Repository.SqlServer
                 buffered,
                  timeout);
         }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <typeparam name="TResult"></typeparam>
+        /// <param name="columns"></param>
+        /// <param name="timeout"></param>
+        /// <returns></returns>
         public Task<TResult> SingleAsync<TResult>(Expression<Func<T, TResult>> columns, int? timeout = null)
         {
             _columns = ExpressionUtil.BuildColumns(columns, _param, _prefix);
@@ -729,6 +1068,14 @@ namespace PoJun.Dapper.Repository.SqlServer
                 _columns.Select(s => string.Format("{0} AS {1}", s.Value, s.Key))),
                  timeout);
         }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="colums"></param>
+        /// <param name="buffered"></param>
+        /// <param name="timeout"></param>
+        /// <returns></returns>
         public IEnumerable<T> Select(string colums = null, bool buffered = true, int? timeout = null)
         {
             if (colums != null)
@@ -741,6 +1088,13 @@ namespace PoJun.Dapper.Repository.SqlServer
                 return conn.Query<T>(sql, _param, buffered: buffered, commandTimeout: timeout);
             }
         }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="colums"></param>
+        /// <param name="timeout"></param>
+        /// <returns></returns>
         public async Task<IEnumerable<T>> SelectAsync(string colums = null, int? timeout = null)
         {
             if (colums != null)
@@ -753,6 +1107,15 @@ namespace PoJun.Dapper.Repository.SqlServer
                 return await conn.QueryAsync<T>(sql, _param, commandTimeout: timeout);
             }
         }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <typeparam name="TResult"></typeparam>
+        /// <param name="columns"></param>
+        /// <param name="buffered"></param>
+        /// <param name="timeout"></param>
+        /// <returns></returns>
         public IEnumerable<TResult> Select<TResult>(string columns = null, bool buffered = true, int? timeout = null)
         {
             if (columns != null)
@@ -765,6 +1128,14 @@ namespace PoJun.Dapper.Repository.SqlServer
                 return conn.Query<TResult>(sql, _param, buffered: buffered, commandTimeout: timeout);
             }
         }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <typeparam name="TResult"></typeparam>
+        /// <param name="columns"></param>
+        /// <param name="timeout"></param>
+        /// <returns></returns>
         public async Task<IEnumerable<TResult>> SelectAsync<TResult>(string columns = null, int? timeout = null)
         {
             if (columns != null)
@@ -777,6 +1148,15 @@ namespace PoJun.Dapper.Repository.SqlServer
                 return await conn.QueryAsync<TResult>(sql, _param, commandTimeout: timeout);
             }
         }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <typeparam name="TResult"></typeparam>
+        /// <param name="columns"></param>
+        /// <param name="buffered"></param>
+        /// <param name="timeout"></param>
+        /// <returns></returns>
         public IEnumerable<TResult> Select<TResult>(Expression<Func<T, TResult>> columns, bool buffered = true, int? timeout = null)
         {
             _columns = ExpressionUtil.BuildColumns(columns, _param, _prefix);
@@ -784,6 +1164,14 @@ namespace PoJun.Dapper.Repository.SqlServer
                 _columns.Select(s => string.Format("{0} AS {1}", s.Value, s.Key)))
                 , buffered, timeout);
         }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <typeparam name="TResult"></typeparam>
+        /// <param name="columns"></param>
+        /// <param name="timeout"></param>
+        /// <returns></returns>
         public Task<IEnumerable<TResult>> SelectAsync<TResult>(Expression<Func<T, TResult>> columns, int? timeout = null)
         {
             _columns = ExpressionUtil.BuildColumns(columns, _param, _prefix);
@@ -791,6 +1179,13 @@ namespace PoJun.Dapper.Repository.SqlServer
                 _columns.Select(s => string.Format("{0} AS {1}", s.Value, s.Key)))
                 , timeout);
         }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="columns"></param>
+        /// <param name="timeout"></param>
+        /// <returns></returns>
         public long Count(string columns = null, int? timeout = null)
         {
             if (columns != null)
@@ -803,6 +1198,13 @@ namespace PoJun.Dapper.Repository.SqlServer
                 return conn.ExecuteScalar<long>(sql, _param, commandTimeout: timeout);
             }
         }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="columns"></param>
+        /// <param name="timeout"></param>
+        /// <returns></returns>
         public async Task<long> CountAsync(string columns = null, int? timeout = null)
         {
             if (columns != null)
@@ -815,14 +1217,36 @@ namespace PoJun.Dapper.Repository.SqlServer
                 return await conn.ExecuteScalarAsync<long>(sql, _param, commandTimeout: timeout);
             }
         }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <typeparam name="TResult"></typeparam>
+        /// <param name="expression"></param>
+        /// <param name="timeout"></param>
+        /// <returns></returns>
         public long Count<TResult>(Expression<Func<T, TResult>> expression, int? timeout = null)
         {
             return Count(string.Join(",", ExpressionUtil.BuildColumns(expression, _param, _prefix).Select(s => s.Value)), timeout);
         }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <typeparam name="TResult"></typeparam>
+        /// <param name="expression"></param>
+        /// <param name="timeout"></param>
+        /// <returns></returns>
         public Task<long> CountAsync<TResult>(Expression<Func<T, TResult>> expression, int? timeout = null)
         {
             return CountAsync(string.Join(",", ExpressionUtil.BuildColumns(expression, _param, _prefix).Select(s => s.Value)), timeout);
         }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="timeout"></param>
+        /// <returns></returns>
         public bool Exists(int? timeout = null)
         {
             using (IDbConnection conn = new SqlConnection(ConnectionString))
@@ -831,6 +1255,12 @@ namespace PoJun.Dapper.Repository.SqlServer
                 return conn.ExecuteScalar<int>(sql, _param, commandTimeout: timeout) > 0;
             }
         }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="timeout"></param>
+        /// <returns></returns>
         public async Task<bool> ExistsAsync(int? timeout = null)
         {
             using (IDbConnection conn = new SqlConnection(ConnectionString))
@@ -839,6 +1269,14 @@ namespace PoJun.Dapper.Repository.SqlServer
                 return await conn.ExecuteScalarAsync<int>(sql, _param, commandTimeout: timeout) > 0;
             }
         }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <typeparam name="TResult"></typeparam>
+        /// <param name="expression"></param>
+        /// <param name="timeout"></param>
+        /// <returns></returns>
         public TResult Sum<TResult>(Expression<Func<T, TResult>> expression, int? timeout = null)
         {
             var column = ExpressionUtil.BuildExpression(expression, _param, _prefix);
@@ -850,6 +1288,14 @@ namespace PoJun.Dapper.Repository.SqlServer
             }
 
         }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <typeparam name="TResult"></typeparam>
+        /// <param name="expression"></param>
+        /// <param name="timeout"></param>
+        /// <returns></returns>
         public async Task<TResult> SumAsync<TResult>(Expression<Func<T, TResult>> expression, int? timeout = null)
         {
             var column = ExpressionUtil.BuildExpression(expression, _param, _prefix);
@@ -887,25 +1333,94 @@ namespace PoJun.Dapper.Repository.SqlServer
             return this;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
         public Dictionary<string, object> _param { get; set; }
+
+        /// <summary>
+        /// 
+        /// </summary>
         public Dictionary<string, string> _columns = new Dictionary<string, string>();
+
+        /// <summary>
+        /// 
+        /// </summary>
         public StringBuilder _columnBuffer = new StringBuilder();
+
+        /// <summary>
+        /// 
+        /// </summary>
         public List<string> _filters = new List<string>();
+
+        /// <summary>
+        /// 
+        /// </summary>
         public StringBuilder _setBuffer = new StringBuilder();
+
+        /// <summary>
+        /// 
+        /// </summary>
         public StringBuilder _havingBuffer = new StringBuilder();
+
+        /// <summary>
+        /// 
+        /// </summary>
         public StringBuilder _whereBuffer = new StringBuilder();
+
+        /// <summary>
+        /// 
+        /// </summary>
         public StringBuilder _groupBuffer = new StringBuilder();
+
+        /// <summary>
+        /// 
+        /// </summary>
         public StringBuilder _orderBuffer = new StringBuilder();
+
+        /// <summary>
+        /// 
+        /// </summary>
         public StringBuilder _distinctBuffer = new StringBuilder();
+
+        /// <summary>
+        /// 
+        /// </summary>
         public StringBuilder _countBuffer = new StringBuilder();
+
+        /// <summary>
+        /// 
+        /// </summary>
         public StringBuilder _sumBuffer = new StringBuilder();
+
+        /// <summary>
+        /// 
+        /// </summary>
         public StringBuilder _lock = new StringBuilder();
+
+        /// <summary>
+        /// 
+        /// </summary>
         public EntityTable _table = EntityUtil.GetTable<T>();
+
+        /// <summary>
+        /// 
+        /// </summary>
         public int? pageIndex = null;
+
+        /// <summary>
+        /// 
+        /// </summary>
         public int? pageCount = null;
         #endregion
 
         #region build
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="expression"></param>
+        /// <returns></returns>
         public string BuildInsert(Expression expression = null)
         {
             if (expression == null)
@@ -926,6 +1441,12 @@ namespace PoJun.Dapper.Repository.SqlServer
                 return sql;
             }
         }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="allColumn"></param>
+        /// <returns></returns>
         public string BuildUpdate(bool allColumn = true)
         {
             if (allColumn)
@@ -949,6 +1470,12 @@ namespace PoJun.Dapper.Repository.SqlServer
             }
 
         }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="expression"></param>
+        /// <returns></returns>
         public string BuildUpdate(Expression expression)
         {
             var keyColumn = _table.Columns.Find(f => f.ColumnKey == ColumnKey.Primary);
@@ -960,6 +1487,11 @@ namespace PoJun.Dapper.Repository.SqlServer
                     );
             return sql;
         }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
         public string BuildDelete()
         {
             var sql = string.Format("DELETE FROM {0}{1}",
@@ -967,6 +1499,11 @@ namespace PoJun.Dapper.Repository.SqlServer
                 _whereBuffer.Length > 0 ? string.Format(" WHERE {0}", _whereBuffer) : "");
             return sql;
         }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
         public string BuildSelect()
         {
             var sqlBuffer = new StringBuilder();
@@ -1029,6 +1566,11 @@ namespace PoJun.Dapper.Repository.SqlServer
                 return sqlBuffer.ToString();
             }
         }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
         public string BuildCount()
         {
             var sqlBuffer = new StringBuilder("SELECT");
@@ -1074,6 +1616,11 @@ namespace PoJun.Dapper.Repository.SqlServer
                 return sqlBuffer.ToString();
             }
         }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
         public string BuildExists()
         {
             var sqlBuffer = new StringBuilder();
@@ -1094,6 +1641,9 @@ namespace PoJun.Dapper.Repository.SqlServer
             var sql = string.Format("SELECT 1 WHERE EXISTS({0})", sqlBuffer);
             return sql;
         }
+        /// <summary>
+        /// 
+        /// </summary>
         public string BuildSum()
         {
             var sqlBuffer = new StringBuilder();
@@ -1104,6 +1654,7 @@ namespace PoJun.Dapper.Repository.SqlServer
             }
             return sqlBuffer.ToString();
         }
+        
         #endregion
 
 

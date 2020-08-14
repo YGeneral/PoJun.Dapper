@@ -17,114 +17,199 @@ namespace PoJun.Dapper
 	public static class Operator
     {
         #region extension
+
+        /// <summary>
+        /// 
+        /// </summary>
         public static bool In(ValueType column, IEnumerable enumerable)
         {
             return true;
         }
+        /// <summary>
+        /// 
+        /// </summary>
         public static bool In(ValueType column, params ValueType[] value)
         {
             return true;
         }
+        /// <summary>
+        /// 
+        /// </summary>
         public static bool In(ValueType column, ISubQuery subuery)
         {
             return true;
         }
+        /// <summary>
+        /// 
+        /// </summary>
         public static bool NotIn(ValueType column, IEnumerable enumerable)
         {
             return true;
         }
+        /// <summary>
+        /// 
+        /// </summary>
         public static bool NotIn(ValueType column, params ValueType[] value)
         {
             return true;
         }
+        /// <summary>
+        /// 
+        /// </summary>
         public static bool NotIn(ValueType column, ISubQuery subuery)
         {
             return true;
         }
+        /// <summary>
+        /// 
+        /// </summary>
         public static bool In(string column, IEnumerable enumerable)
         {
             return true;
         }
+        /// <summary>
+        /// 
+        /// </summary>
         public static bool In(string column, params string[] value)
         {
             return true;
         }
+        /// <summary>
+        /// 
+        /// </summary>
         public static bool In(string column, ISubQuery subquery)
         {
             return true;
         }
+        /// <summary>
+        /// 
+        /// </summary>
         public static bool NotIn(string column, IEnumerable enumerable)
         {
             return true;
         }
+        /// <summary>
+        /// 
+        /// </summary>
         public static bool NotIn(string column, params string[] value)
         {
             return true;
         }
+        /// <summary>
+        /// 
+        /// </summary>
         public static bool NotIn(string column, ISubQuery subquery)
         {
             return true;
         }
+        /// <summary>
+        /// 
+        /// </summary>
         public static T Any<T>(T subquery) where T : ISubQuery
         {
             return default;
         }
+        /// <summary>
+        /// 
+        /// </summary>
         public static T All<T>(T subuery) where T : ISubQuery
         {
             return default;
         }
+        /// <summary>
+        /// 
+        /// </summary>
         public static bool Exists(ISubQuery subquery)
         {
             return true;
         }
+        /// <summary>
+        /// 
+        /// </summary>
         public static bool NotExists(ISubQuery subuery)
         {
             return true;
         }
+        /// <summary>
+        /// 
+        /// </summary>
         public static bool Contains(string column, string text)
         {
             return true;
         }
+        /// <summary>
+        /// 
+        /// </summary>
         public static bool NotContains(string column, string text)
         {
             return true;
         }
+        /// <summary>
+        /// 
+        /// </summary>
         public static bool StartsWith(string column, string text)
         {
             return true;
         }
+        /// <summary>
+        /// 
+        /// </summary>
         public static bool NotStartsWith(string column, string text)
         {
             return true;
         }
+        /// <summary>
+        /// 
+        /// </summary>
         public static bool EndsWith(string column, string text)
         {
             return true;
         }
+        /// <summary>
+        /// 
+        /// </summary>
         public static bool NotEndsWith(string column, string text)
         {
             return true;
         }
+        /// <summary>
+        /// 
+        /// </summary>
         public static bool Regexp(string column, string regexp)
         {
             return true;
         }
+        /// <summary>
+        /// 
+        /// </summary>
         public static bool NotRegexp(string column, string regexp)
         {
             return true;
         }
+        /// <summary>
+        /// 
+        /// </summary>
         public static bool IsNull<T>(T column)
         {
             return true;
         }
+        /// <summary>
+        /// 
+        /// </summary>
         public static bool IsNotNull<T>(T column)
         {
             return true;
         }
+        /// <summary>
+        /// 
+        /// </summary>
         public static bool Between<T>(T column, T value1, T value2)
         {
             return true;
         }
+        /// <summary>
+        /// 
+        /// </summary>
         public static bool NotBetween<T>(T column, T value1, T value2)
         {
             return true;
@@ -132,6 +217,9 @@ namespace PoJun.Dapper
         #endregion
 
         #region utils
+        /// <summary>
+        /// 
+        /// </summary>
         public static string GetOperator(string operatorType)
         {
             switch (operatorType)
@@ -185,6 +273,9 @@ namespace PoJun.Dapper
             }
             return operatorType;
         }
+        /// <summary>
+        /// 
+        /// </summary>
         public static string GetOperator(ExpressionType type)
         {
             var condition = string.Empty;

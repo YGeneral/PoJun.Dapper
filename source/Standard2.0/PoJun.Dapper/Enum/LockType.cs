@@ -13,9 +13,21 @@ namespace PoJun.Dapper
 	/// </summary>
 	public enum LockType
     {
+        /// <summary>
+        /// 
+        /// </summary>
         FOR_UPADTE,
+        /// <summary>
+        /// 
+        /// </summary>
         LOCK_IN_SHARE_MODE,
+        /// <summary>
+        /// 
+        /// </summary>
         UPDLOCK,
+        /// <summary>
+        /// 
+        /// </summary>
         NOLOCK
     }
 }

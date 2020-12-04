@@ -691,6 +691,7 @@ namespace PoJun.Dapper.Repository.SqlServer
             using (IDbConnection conn = new SqlConnection(ConnectionString))
             {
                 var sql = BuildDelete();
+                System.Diagnostics.Trace.WriteLine($"Dapper生成的SQL语句-{DateTime.Now:yyyy-MM-dd HH:mm:ss}：【{sql}】");
                 return conn.Execute(sql, _param, commandTimeout: timeout);
             }
         }
@@ -705,6 +706,7 @@ namespace PoJun.Dapper.Repository.SqlServer
             using (IDbConnection conn = new SqlConnection(ConnectionString))
             {
                 var sql = BuildDelete();
+                System.Diagnostics.Trace.WriteLine($"Dapper生成的SQL语句-{DateTime.Now:yyyy-MM-dd HH:mm:ss}：【{sql}】");
                 return await conn.ExecuteAsync(sql, _param, commandTimeout: timeout);
             }
         }
@@ -720,6 +722,7 @@ namespace PoJun.Dapper.Repository.SqlServer
             using (IDbConnection conn = new SqlConnection(ConnectionString))
             {
                 var sql = BuildInsert(expression);
+                System.Diagnostics.Trace.WriteLine($"Dapper生成的SQL语句-{DateTime.Now:yyyy-MM-dd HH:mm:ss}：【{sql}】");
                 return conn.Execute(sql, _param, commandTimeout: timeout);
             }
         }
@@ -736,6 +739,7 @@ namespace PoJun.Dapper.Repository.SqlServer
             {
                 var sql = BuildInsert(expression);
                 sql = string.Format("{0};SELECT @@IDENTITY;", sql);
+                System.Diagnostics.Trace.WriteLine($"Dapper生成的SQL语句-{DateTime.Now:yyyy-MM-dd HH:mm:ss}：【{sql}】");
                 return conn.ExecuteScalar<long>(sql, _param, commandTimeout: timeout);
             }
         }
@@ -751,6 +755,7 @@ namespace PoJun.Dapper.Repository.SqlServer
             using (IDbConnection conn = new SqlConnection(ConnectionString))
             {
                 var sql = BuildInsert(expression);
+                System.Diagnostics.Trace.WriteLine($"Dapper生成的SQL语句-{DateTime.Now:yyyy-MM-dd HH:mm:ss}：【{sql}】");
                 return await conn.ExecuteAsync(sql, _param, commandTimeout: timeout);
             }
         }
@@ -767,6 +772,7 @@ namespace PoJun.Dapper.Repository.SqlServer
             {
                 var sql = BuildInsert(expression);
                 sql = string.Format("{0};SELECT @@IDENTITY;", sql);
+                System.Diagnostics.Trace.WriteLine($"Dapper生成的SQL语句-{DateTime.Now:yyyy-MM-dd HH:mm:ss}：【{sql}】");
                 return await conn.ExecuteScalarAsync<long>(sql, _param, commandTimeout: timeout);
             }
         }
@@ -782,6 +788,7 @@ namespace PoJun.Dapper.Repository.SqlServer
             using (IDbConnection conn = new SqlConnection(ConnectionString))
             {
                 var sql = BuildInsert();
+                System.Diagnostics.Trace.WriteLine($"Dapper生成的SQL语句-{DateTime.Now:yyyy-MM-dd HH:mm:ss}：【{sql}】");
                 return conn.Execute(sql, entity, commandTimeout: timeout);
             }
         }
@@ -797,6 +804,7 @@ namespace PoJun.Dapper.Repository.SqlServer
             using (IDbConnection conn = new SqlConnection(ConnectionString))
             {
                 var sql = BuildInsert();
+                System.Diagnostics.Trace.WriteLine($"Dapper生成的SQL语句-{DateTime.Now:yyyy-MM-dd HH:mm:ss}：【{sql}】");
                 return await conn.ExecuteAsync(sql, entity, commandTimeout: timeout);
             }
         }
@@ -813,6 +821,7 @@ namespace PoJun.Dapper.Repository.SqlServer
             {
                 var sql = BuildInsert();
                 sql = string.Format("{0};SELECT @@IDENTITY;", sql);
+                System.Diagnostics.Trace.WriteLine($"Dapper生成的SQL语句-{DateTime.Now:yyyy-MM-dd HH:mm:ss}：【{sql}】");
                 return conn.ExecuteScalar<long>(sql, entity, commandTimeout: timeout);
             }
         }
@@ -829,6 +838,7 @@ namespace PoJun.Dapper.Repository.SqlServer
             {
                 var sql = BuildInsert();
                 sql = string.Format("{0};SELECT @@IDENTITY;", sql);
+                System.Diagnostics.Trace.WriteLine($"Dapper生成的SQL语句-{DateTime.Now:yyyy-MM-dd HH:mm:ss}：【{sql}】");
                 return await conn.ExecuteScalarAsync<long>(sql, entity, commandTimeout: timeout);
             }
         }
@@ -844,6 +854,7 @@ namespace PoJun.Dapper.Repository.SqlServer
             using (IDbConnection conn = new SqlConnection(ConnectionString))
             {
                 var sql = BuildInsert();
+                System.Diagnostics.Trace.WriteLine($"Dapper生成的SQL语句-{DateTime.Now:yyyy-MM-dd HH:mm:ss}：【{sql}】");
                 return conn.Execute(sql, entitys, commandTimeout: timeout);
             }
         }
@@ -859,6 +870,7 @@ namespace PoJun.Dapper.Repository.SqlServer
             using (IDbConnection conn = new SqlConnection(ConnectionString))
             {
                 var sql = BuildInsert();
+                System.Diagnostics.Trace.WriteLine($"Dapper生成的SQL语句-{DateTime.Now:yyyy-MM-dd HH:mm:ss}：【{sql}】");
                 return await conn.ExecuteAsync(sql, entitys, commandTimeout: timeout);
             }
         }
@@ -875,6 +887,7 @@ namespace PoJun.Dapper.Repository.SqlServer
                 if (_setBuffer.Length < 1)
                     return 0;
                 var sql = BuildUpdate(false);
+                System.Diagnostics.Trace.WriteLine($"Dapper生成的SQL语句-{DateTime.Now:yyyy-MM-dd HH:mm:ss}：【{sql}】");
                 return conn.Execute(sql, _param, commandTimeout: timeout);            
             }
         }
@@ -891,6 +904,7 @@ namespace PoJun.Dapper.Repository.SqlServer
                 if (_setBuffer.Length < 1)
                     return 0;
                 var sql = BuildUpdate(false);
+                System.Diagnostics.Trace.WriteLine($"Dapper生成的SQL语句-{DateTime.Now:yyyy-MM-dd HH:mm:ss}：【{sql}】");
                 return await conn.ExecuteAsync(sql, _param, commandTimeout: timeout);
             }
         }
@@ -906,6 +920,7 @@ namespace PoJun.Dapper.Repository.SqlServer
             using (IDbConnection conn = new SqlConnection(ConnectionString))
             {
                 var sql = BuildUpdate(expression);
+                System.Diagnostics.Trace.WriteLine($"Dapper生成的SQL语句-{DateTime.Now:yyyy-MM-dd HH:mm:ss}：【{sql}】");
                 return conn.Execute(sql, _param, commandTimeout: timeout);
             }
         }
@@ -921,6 +936,7 @@ namespace PoJun.Dapper.Repository.SqlServer
             using (IDbConnection conn = new SqlConnection(ConnectionString))
             {
                 var sql = BuildUpdate(expression);
+                System.Diagnostics.Trace.WriteLine($"Dapper生成的SQL语句-{DateTime.Now:yyyy-MM-dd HH:mm:ss}：【{sql}】");
                 return await conn.ExecuteAsync(sql, _param, commandTimeout: timeout);
             }
         }
@@ -936,6 +952,7 @@ namespace PoJun.Dapper.Repository.SqlServer
             using (IDbConnection conn = new SqlConnection(ConnectionString))
             {
                 var sql = BuildUpdate();
+                System.Diagnostics.Trace.WriteLine($"Dapper生成的SQL语句-{DateTime.Now:yyyy-MM-dd HH:mm:ss}：【{sql}】");
                 return conn.Execute(sql, entity, commandTimeout: timeout);
             }
         }
@@ -951,6 +968,7 @@ namespace PoJun.Dapper.Repository.SqlServer
             using (IDbConnection conn = new SqlConnection(ConnectionString))
             {
                 var sql = BuildUpdate();
+                System.Diagnostics.Trace.WriteLine($"Dapper生成的SQL语句-{DateTime.Now:yyyy-MM-dd HH:mm:ss}：【{sql}】");
                 return await conn.ExecuteAsync(sql, entity, commandTimeout: timeout);
             }
         }
@@ -966,6 +984,7 @@ namespace PoJun.Dapper.Repository.SqlServer
             using (IDbConnection conn = new SqlConnection(ConnectionString))
             {
                 var sql = BuildUpdate();
+                System.Diagnostics.Trace.WriteLine($"Dapper生成的SQL语句-{DateTime.Now:yyyy-MM-dd HH:mm:ss}：【{sql}】");
                 return conn.Execute(sql, entitys, commandTimeout: timeout);
             }
         }
@@ -981,6 +1000,7 @@ namespace PoJun.Dapper.Repository.SqlServer
             using (IDbConnection conn = new SqlConnection(ConnectionString))
             {
                 var sql = BuildUpdate();
+                System.Diagnostics.Trace.WriteLine($"Dapper生成的SQL语句-{DateTime.Now:yyyy-MM-dd HH:mm:ss}：【{sql}】");
                 return await conn.ExecuteAsync(sql, entitys, commandTimeout: timeout);
             }
         }
@@ -1085,6 +1105,7 @@ namespace PoJun.Dapper.Repository.SqlServer
             using (IDbConnection conn = new SqlConnection(ConnectionString))
             {
                 var sql = BuildSelect();
+                System.Diagnostics.Trace.WriteLine($"Dapper生成的SQL语句-{DateTime.Now:yyyy-MM-dd HH:mm:ss}：【{sql}】");
                 return conn.Query<T>(sql, _param, buffered: buffered, commandTimeout: timeout);
             }
         }
@@ -1104,6 +1125,7 @@ namespace PoJun.Dapper.Repository.SqlServer
             using (IDbConnection conn = new SqlConnection(ConnectionString))
             {
                 var sql = BuildSelect();
+                System.Diagnostics.Trace.WriteLine($"Dapper生成的SQL语句-{DateTime.Now:yyyy-MM-dd HH:mm:ss}：【{sql}】");
                 return await conn.QueryAsync<T>(sql, _param, commandTimeout: timeout);
             }
         }
@@ -1125,6 +1147,7 @@ namespace PoJun.Dapper.Repository.SqlServer
             using (IDbConnection conn = new SqlConnection(ConnectionString))
             {
                 var sql = BuildSelect();
+                System.Diagnostics.Trace.WriteLine($"Dapper生成的SQL语句-{DateTime.Now:yyyy-MM-dd HH:mm:ss}：【{sql}】");
                 return conn.Query<TResult>(sql, _param, buffered: buffered, commandTimeout: timeout);
             }
         }
@@ -1145,6 +1168,7 @@ namespace PoJun.Dapper.Repository.SqlServer
             using (IDbConnection conn = new SqlConnection(ConnectionString))
             {
                 var sql = BuildSelect();
+                System.Diagnostics.Trace.WriteLine($"Dapper生成的SQL语句-{DateTime.Now:yyyy-MM-dd HH:mm:ss}：【{sql}】");
                 return await conn.QueryAsync<TResult>(sql, _param, commandTimeout: timeout);
             }
         }
@@ -1195,6 +1219,7 @@ namespace PoJun.Dapper.Repository.SqlServer
             using (IDbConnection conn = new SqlConnection(ConnectionString))
             {
                 var sql = BuildCount();
+                System.Diagnostics.Trace.WriteLine($"Dapper生成的SQL语句-{DateTime.Now:yyyy-MM-dd HH:mm:ss}：【{sql}】");
                 return conn.ExecuteScalar<long>(sql, _param, commandTimeout: timeout);
             }
         }
@@ -1214,6 +1239,7 @@ namespace PoJun.Dapper.Repository.SqlServer
             using (IDbConnection conn = new SqlConnection(ConnectionString))
             {
                 var sql = BuildCount();
+                System.Diagnostics.Trace.WriteLine($"Dapper生成的SQL语句-{DateTime.Now:yyyy-MM-dd HH:mm:ss}：【{sql}】");
                 return await conn.ExecuteScalarAsync<long>(sql, _param, commandTimeout: timeout);
             }
         }
@@ -1252,6 +1278,7 @@ namespace PoJun.Dapper.Repository.SqlServer
             using (IDbConnection conn = new SqlConnection(ConnectionString))
             {
                 var sql = BuildExists();
+                System.Diagnostics.Trace.WriteLine($"Dapper生成的SQL语句-{DateTime.Now:yyyy-MM-dd HH:mm:ss}：【{sql}】");
                 return conn.ExecuteScalar<int>(sql, _param, commandTimeout: timeout) > 0;
             }
         }
@@ -1266,6 +1293,7 @@ namespace PoJun.Dapper.Repository.SqlServer
             using (IDbConnection conn = new SqlConnection(ConnectionString))
             {
                 var sql = BuildExists();
+                System.Diagnostics.Trace.WriteLine($"Dapper生成的SQL语句-{DateTime.Now:yyyy-MM-dd HH:mm:ss}：【{sql}】");
                 return await conn.ExecuteScalarAsync<int>(sql, _param, commandTimeout: timeout) > 0;
             }
         }
@@ -1284,6 +1312,7 @@ namespace PoJun.Dapper.Repository.SqlServer
             using (IDbConnection conn = new SqlConnection(ConnectionString))
             {
                 var sql = BuildSum();
+                System.Diagnostics.Trace.WriteLine($"Dapper生成的SQL语句-{DateTime.Now:yyyy-MM-dd HH:mm:ss}：【{sql}】");
                 return conn.ExecuteScalar<TResult>(sql, _param, commandTimeout: timeout);
             }
 
@@ -1303,6 +1332,7 @@ namespace PoJun.Dapper.Repository.SqlServer
             using (IDbConnection conn = new SqlConnection(ConnectionString))
             {
                 var sql = BuildSum();
+                System.Diagnostics.Trace.WriteLine($"Dapper生成的SQL语句-{DateTime.Now:yyyy-MM-dd HH:mm:ss}：【{sql}】");
                 return await conn.ExecuteScalarAsync<TResult>(sql, _param, commandTimeout: timeout);
             }
         }

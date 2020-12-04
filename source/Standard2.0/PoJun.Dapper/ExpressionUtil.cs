@@ -1,5 +1,6 @@
 ﻿using PoJun.Dapper.IRepository;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
@@ -481,7 +482,10 @@ namespace PoJun.Dapper
             {
                 var memberName = memberExpression.Member.Name;
                 var columnName = GetColumnName(memberExpression.Expression.Type, memberName, singleTable);
-                column.Add(memberName, columnName);
+                if (memberExpression.Type.BaseType.FullName == "System.Enum")
+                    column.Add(memberName, memberExpression.Type.BaseType.FullName);
+                else
+                    column.Add(memberName, memberExpression.Type.FullName);
                 return column;
             }
             else
@@ -490,6 +494,32 @@ namespace PoJun.Dapper
                 var build = BuildExpression(expression, param, prefix, singleTable);
                 column.Add(name, build);
                 return column;
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="enumType"></param>
+        /// <param name="enumName"></param>
+        /// <returns></returns>
+        public static int GetEnumValue(Type enumType, string enumName)
+        {
+            try
+            {
+                if (!enumType.IsEnum)
+                    throw new ArgumentException("enumType必须是枚举类型");
+                var values = Enum.GetValues(enumType);
+                var ht = new Hashtable();
+                foreach (var val in values)
+                {
+                    ht.Add(Enum.GetName(enumType, val), val);
+                }
+                return (int)ht[enumName];
+            }
+            catch (Exception e)
+            {
+                throw e;
             }
         }
 
@@ -556,7 +586,13 @@ namespace PoJun.Dapper
                     }
                     if ((mif is System.Reflection.PropertyInfo pif))
                     {
-                        value = pif.GetValue(value);
+                        if (pif.PropertyType.FullName == "System.DateTime")
+                        {
+                            value = (Convert.ToDateTime(pif.GetValue(value))).ToString("yyyy-MM-dd HH:mm:ss.fff");
+                            break;
+                        }
+                        else
+                            value = pif.GetValue(value);
                     }
                     else if ((mif is System.Reflection.FieldInfo fif))
                     {

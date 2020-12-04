@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <PackageId>PoJun.Dapper.Repository</PackageId>
-    <PackageTags>orm;sql;micro-orm</PackageTags>
+    <PackageTags>orm;sql;micro-orm;dapper;pojun</PackageTags>
     <Title>Dapper</Title>
     <Description>基于Dapper二次封装的ORM，支持原生SQL CRUD和Linq CRUD</Description>
     <Authors>PoJun</Authors>
@@ -10,14 +10,15 @@
     <Company>PoJun.Dapper.Repository</Company>
     <Product>PoJun.Dapper.Repository</Product>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <AssemblyVersion>3.0.9.0</AssemblyVersion>
-    <FileVersion>3.0.9.0</FileVersion>
-    <Version>3.0.9</Version>
+    <AssemblyVersion>3.1.2.0</AssemblyVersion>
+    <FileVersion>3.1.2.0</FileVersion>
+    <Version>3.1.2</Version>
     <PackageProjectUrl>https://github.com/YGeneral/PoJun.Dapper</PackageProjectUrl>
     <Copyright>PoJun</Copyright>
     <RepositoryUrl>https://github.com/YGeneral/PoJun.Dapper</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
-    <PackageReleaseNotes>增对上次升级后对之前版本的兼容问题修复</PackageReleaseNotes> 
+    <PackageReleaseNotes>1：解决在Docker环境中MySql数据库Linq方式查询时间类型类型的字段时间被格式化为：dd/MM/yyyy hh/mm/ss的问题
+2：解决MySql数据库Linq方式下修改枚举类型时只能获取到枚举的Name不能获取到Value的问题</PackageReleaseNotes> 
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">

@@ -13,6 +13,16 @@ namespace PoJun.Dapper.Test
 
         static async Task Main(string[] args)
         {
+            var param = new Dictionary<string, object>();
+            param.Add("@Name", "20200923破军测试");
+            param.Add("@Age", 28);
+            param.Add("@Sex",1);
+            param.Add("@IsDelete", true);
+
+            var sql = "insert into User (Name,Age,Sex,IsDelete) values(@Name,@Age,@Sex,@IsDelete)";
+
+            var sfsfdsf = await userRepository.ExecuteAsync(sql, param);
+
             var name = "123";
             var result161 = userRepository.initLinq().Where(a => a.Name == name).Select().ToList();
             #region 新增
@@ -29,9 +39,9 @@ namespace PoJun.Dapper.Test
             //批量新增
             var addList = new List<User>
             {
-                new User() { Name = $"PoJun{DateTime.Now.ToString("yyyyMMddHHmmss")}", Age = 30 },
-                new User() { Name = $"PoJun{DateTime.Now.ToString("yyyyMMddHHmmss")}", Age = 30 },
-                new User() { Name = $"PoJun{DateTime.Now.ToString("yyyyMMddHHmmss")}", Age = 30 }
+                new User() { Name = $"PoJun{DateTime.Now.ToString("yyyyMMddHHmmss")}", Age = 30, LastVersionTime = DateTime.Now },
+                new User() { Name = $"PoJun{DateTime.Now.ToString("yyyyMMddHHmmss")}", Age = 30, LastVersionTime = DateTime.Now },
+                new User() { Name = $"PoJun{DateTime.Now.ToString("yyyyMMddHHmmss")}", Age = 30, LastVersionTime = DateTime.Now }
             };
             var result5 = await userRepository.initLinq().InsertAsync(addList);
 
@@ -40,11 +50,13 @@ namespace PoJun.Dapper.Test
             #region 修改
 
             //单条主键更新（并且不更新Age字段）
-            var result6 = await userRepository.initLinq().Filter(x => x.Age).UpdateAsync(new User() { Id = 1, Name = $"修改后的PoJun{DateTime.Now.ToString("yyyyMMddHHmmss")}", Sex = 2 });
+            var result6 = await userRepository.initLinq().Filter(x => x.Age).UpdateAsync(new User() { Id = 1, Name = $"修改后的PoJun{DateTime.Now.ToString("yyyyMMddHHmmss")}", Sex =  SexType.Woman });
             //单条主键更新（并且不更新Age、Sex字段）
             var result7 = await userRepository.initLinq().Filter(x => x.Age).Filter(x => x.Sex).UpdateAsync(new User() { Id = 2, Name = $"修改后的PoJun{DateTime.Now.ToString("yyyyMMddHHmmss")}" });
             //动态更新字段
             var result8 = await userRepository.initLinq().Where(x => x.IsDelete == false && x.Id > 30 && x.Id < 50).Set(x => x.IsDelete, true).UpdateAsync();
+
+            var result8_1 = await userRepository.initLinq().Where(x => x.Id == 5).Set(x => x.Name, "撒旦发252").Set(x=>x.Sex, SexType.Woman).UpdateAsync();
 
             #endregion
 
@@ -77,7 +89,9 @@ namespace PoJun.Dapper.Test
             //查询多条数据
             var result15 = userRepository.initLinq().Select().ToList();
             var result16 = userRepository.initLinq().Where(a => a.Age > 28).Select().ToList();
-            
+
+            var result16_1 = userRepository.initLinq().Where(a => a.LastVersionTime >= DateTime.Now.Date).Select().ToList();
+
             var result17 = userRepository.initLinq().OrderBy(a => a.Id).OrderByDescending(a => a.Name).Select().ToList();
             var result18 = userRepository.initLinq().Take(4).Select().ToList();
             var result19 = userRepository.initLinq().Take(4).Skip(2, 2).Select().ToList();
@@ -157,8 +171,17 @@ namespace PoJun.Dapper.Test
         public int Age { get; set; }
 
 
-        public int Sex { get; set; }
+        public SexType Sex { get; set; }
 
-        public bool IsDelete { get; set; }
+        public bool IsDelete { get; set; } 
+
+        public DateTime LastVersionTime { get; set; }
+    }
+
+    public enum SexType : int
+    {
+         Man = 1,
+
+        Woman = 2
     }
 }

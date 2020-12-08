@@ -13,10 +13,13 @@ namespace PoJun.Dapper.Test
 
         static async Task Main(string[] args)
         {
+
+            var result8_1 = await userRepository.initLinq().Where(x => x.Id == 5).Set(x => x.Age, 99).Set(x => x.Name, "撒旦发252").Set(x => x.Sex, SexType.Woman).UpdateAsync();
+
             var param = new Dictionary<string, object>();
             param.Add("@Name", "20200923破军测试");
             param.Add("@Age", 28);
-            param.Add("@Sex",1);
+            param.Add("@Sex", 1);
             param.Add("@IsDelete", true);
 
             var sql = "insert into User (Name,Age,Sex,IsDelete) values(@Name,@Age,@Sex,@IsDelete)";
@@ -50,13 +53,13 @@ namespace PoJun.Dapper.Test
             #region 修改
 
             //单条主键更新（并且不更新Age字段）
-            var result6 = await userRepository.initLinq().Filter(x => x.Age).UpdateAsync(new User() { Id = 1, Name = $"修改后的PoJun{DateTime.Now.ToString("yyyyMMddHHmmss")}", Sex =  SexType.Woman });
+            var result6 = await userRepository.initLinq().Filter(x => x.Age).UpdateAsync(new User() { Id = 1, Name = $"修改后的PoJun{DateTime.Now.ToString("yyyyMMddHHmmss")}", Sex = SexType.Woman });
             //单条主键更新（并且不更新Age、Sex字段）
             var result7 = await userRepository.initLinq().Filter(x => x.Age).Filter(x => x.Sex).UpdateAsync(new User() { Id = 2, Name = $"修改后的PoJun{DateTime.Now.ToString("yyyyMMddHHmmss")}" });
             //动态更新字段
             var result8 = await userRepository.initLinq().Where(x => x.IsDelete == false && x.Id > 30 && x.Id < 50).Set(x => x.IsDelete, true).UpdateAsync();
 
-            var result8_1 = await userRepository.initLinq().Where(x => x.Id == 5).Set(x => x.Name, "撒旦发252").Set(x=>x.Sex, SexType.Woman).UpdateAsync();
+
 
             #endregion
 
@@ -80,7 +83,7 @@ namespace PoJun.Dapper.Test
             //查询数据库中的第一条记录
             var result13 = userRepository.initLinq().OrderBy("Id").Single();
             //查询ID等于24的Name字段
-            var result14 = userRepository.initLinq().Where(a => a.Id == 24).Single(s => s.Name); 
+            var result14 = userRepository.initLinq().Where(a => a.Id == 24).Single(s => s.Name);
 
             #endregion
 
@@ -96,7 +99,7 @@ namespace PoJun.Dapper.Test
             var result18 = userRepository.initLinq().Take(4).Select().ToList();
             var result19 = userRepository.initLinq().Take(4).Skip(2, 2).Select().ToList();
             var result20 = userRepository.initLinq().Select(s => new { s.Id, s.Name }).ToList();
-            var result21 = userRepository.initLinq().Select(s => new UserModel { Id = s.Id, Name = s.Name }).ToList(); 
+            var result21 = userRepository.initLinq().Select(s => new UserModel { Id = s.Id, Name = s.Name }).ToList();
 
             #endregion
 
@@ -112,12 +115,12 @@ namespace PoJun.Dapper.Test
             var result25 = userRepository.initLinq().Where(a => a.Id > id).Page(2, 2, out total).Select();
             //分组分页 
             var result26 = userRepository.initLinq().GroupBy(a => a.Name).Page(1, 2, out total).Select(s => new { s.Name });
-            var result27 = userRepository.initLinq().GroupBy(a => a.Name).Page(2, 2, out total).Select(s => new { s.Name }); 
+            var result27 = userRepository.initLinq().GroupBy(a => a.Name).Page(2, 2, out total).Select(s => new { s.Name });
 
             #endregion
 
-            
-            var idlists = new List<int>() { 30,31,32,33,34,35 };
+
+            var idlists = new List<int>() { 30, 31, 32, 33, 34, 35 };
             var result28 = userRepository.initLinq().Where(x => Operator.In(x.Id, idlists)).Select().ToList();
 
 
@@ -166,6 +169,7 @@ namespace PoJun.Dapper.Test
         [Column("`Id`", ColumnKey.Primary, true)]
         public int Id { get; set; }
 
+        [Column("Name_a")]
         public string Name { get; set; }
 
         public int Age { get; set; }
@@ -173,14 +177,14 @@ namespace PoJun.Dapper.Test
 
         public SexType Sex { get; set; }
 
-        public bool IsDelete { get; set; } 
+        public bool IsDelete { get; set; }
 
         public DateTime LastVersionTime { get; set; }
     }
 
     public enum SexType : int
     {
-         Man = 1,
+        Man = 1,
 
         Woman = 2
     }

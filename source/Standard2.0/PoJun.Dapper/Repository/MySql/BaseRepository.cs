@@ -404,9 +404,9 @@ namespace PoJun.Dapper.Repository.MySql
                     conn.Open();
 
                 //去除第一句SQL结尾处的分号
-                sql = RemoveEnd(sql, ";");
+                sql = RemoveEnd(sql.Trim(), ";");
                 //生成新的SQL
-                sql = $"{sql};{totalSql}";
+                sql = $"{sql};{totalSql.Trim()}";
 
                 //执行查询
                 using (var multi = conn.QueryMultiple(sql, param, commandTimeout: commandTimeout))
@@ -439,9 +439,9 @@ namespace PoJun.Dapper.Repository.MySql
                     conn.Open();
 
                 //去除第一句SQL结尾处的分号
-                sql = RemoveEnd(sql, ";");
+                sql = RemoveEnd(sql.Trim(), ";");
                 //生成新的SQL
-                sql = $"{sql};{totalSql}";
+                sql = $"{sql};{totalSql.Trim()}";
 
                 //执行查询
                 using (var multi = await conn.QueryMultipleAsync(sql, param, commandTimeout: commandTimeout))

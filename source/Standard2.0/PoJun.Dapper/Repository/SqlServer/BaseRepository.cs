@@ -353,7 +353,7 @@ namespace PoJun.Dapper.Repository.SqlServer
         {
             using (IDbConnection conn = new SqlConnection(ConnectionString))
             {
-                return conn.Query<T>(sql, param: param, commandTimeout: commandTimeout);
+                return conn.Query<T>(sql.Trim(), param: param, commandTimeout: commandTimeout);
             }
         }
 
@@ -375,7 +375,7 @@ namespace PoJun.Dapper.Repository.SqlServer
             {
                 if (conn.State != ConnectionState.Open)
                     conn.Open();
-                var result = await conn.QueryAsync<T>(sql, param: param, commandTimeout: commandTimeout);
+                var result = await conn.QueryAsync<T>(sql.Trim(), param: param, commandTimeout: commandTimeout);
                 return result;
             }
         }

@@ -10,15 +10,15 @@
     <Company>PoJun.Dapper.Repository</Company>
     <Product>PoJun.Dapper.Repository</Product>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <AssemblyVersion>3.1.2.0</AssemblyVersion>
-    <FileVersion>3.1.2.0</FileVersion>
-    <Version>3.1.2</Version>
+    <AssemblyVersion>3.1.3.0</AssemblyVersion>
+    <FileVersion>3.1.3.0</FileVersion>
+    <Version>3.1.3</Version>
     <PackageProjectUrl>https://github.com/YGeneral/PoJun.Dapper</PackageProjectUrl>
     <Copyright>PoJun</Copyright>
     <RepositoryUrl>https://github.com/YGeneral/PoJun.Dapper</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
-    <PackageReleaseNotes>1：解决在Docker环境中MySql数据库Linq方式查询时间类型类型的字段时间被格式化为：dd/MM/yyyy hh/mm/ss的问题
-2：解决MySql数据库Linq方式下修改枚举类型时只能获取到枚举的Name不能获取到Value的问题</PackageReleaseNotes> 
+    <PackageReleaseNotes>1：解决QueryPageList方法传入的SQL如果带空格则SQL执行失败的问题
+2：解决字段别名赋值后无效的bug</PackageReleaseNotes> 
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">

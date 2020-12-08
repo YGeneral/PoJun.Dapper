@@ -480,12 +480,11 @@ namespace PoJun.Dapper
             var column = new Dictionary<string, string>();
             if (expression is MemberExpression memberExpression && memberExpression.Expression != null && memberExpression.Expression.NodeType == ExpressionType.Parameter)
             {
-                var memberName = memberExpression.Member.Name;
-                var columnName = GetColumnName(memberExpression.Expression.Type, memberName, singleTable);
+                var columnName = GetColumnName(memberExpression.Expression.Type, memberExpression.Member.Name, singleTable);
                 if (memberExpression.Type.BaseType.FullName == "System.Enum")
-                    column.Add(memberName, memberExpression.Type.BaseType.FullName);
+                    column.Add(columnName, memberExpression.Type.BaseType.FullName);
                 else
-                    column.Add(memberName, memberExpression.Type.FullName);
+                    column.Add(columnName, memberExpression.Type.FullName);
                 return column;
             }
             else

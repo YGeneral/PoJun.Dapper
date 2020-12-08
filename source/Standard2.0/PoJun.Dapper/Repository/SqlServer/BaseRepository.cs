@@ -603,12 +603,27 @@ namespace PoJun.Dapper.Repository.SqlServer
                 _setBuffer.Append(",");
             }
             var columns = ExpressionUtil.BuildColumn(column, _param, _prefix).First();
-            if(_param != null)
+            if (_param != null)
             {
                 var key = string.Format("{0}{1}", columns.Key, _param.Count);
                 _param.Add(key, value);
-            }            
-            _setBuffer.AppendFormat("{0} = {1}", columns.Key, value);
+            }
+
+            switch (columns.Value)
+            {
+                case "System.String":
+                    _setBuffer.AppendFormat("{0} = '{1}'", columns.Key, value);
+                    break;
+                case "System.DateTime":
+                    _setBuffer.AppendFormat("{0} = '{1}'", columns.Key, (Convert.ToDateTime(value)).ToString("yyyy/MM/dd HH:mm:ss"));
+                    break;
+                case "System.Enum":
+                    _setBuffer.AppendFormat("{0} = {1}", columns.Key, ExpressionUtil.GetEnumValue((column as LambdaExpression).Body.Type, value.ToString()));
+                    break;
+                default:
+                    _setBuffer.AppendFormat("{0} = {1}", columns.Key, value);
+                    break;
+            }
             return this;
         }
 

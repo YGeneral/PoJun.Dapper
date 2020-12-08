@@ -14,7 +14,7 @@ namespace PoJun.Dapper.Test
         static async Task Main(string[] args)
         {
 
-            var result8_1 = await userRepository.initLinq().Where(x => x.Id == 5).Set(x => x.Age, 99).Set(x => x.Name, "撒旦发252").Set(x => x.Sex, SexType.Woman).UpdateAsync();
+            var result8_1 = await userRepository.initLinq().Where(x => x.Id == 5).Set(x => x.LastVersionTime, DateTime.Now).Set(x => x.Name, "撒旦发252").Set(x => x.Sex, SexType.Woman).UpdateAsync();
 
             var param = new Dictionary<string, object>();
             param.Add("@Name", "20200923破军测试");
@@ -169,7 +169,7 @@ namespace PoJun.Dapper.Test
         [Column("`Id`", ColumnKey.Primary, true)]
         public int Id { get; set; }
 
-        [Column("Name_a")]
+        
         public string Name { get; set; }
 
         public int Age { get; set; }

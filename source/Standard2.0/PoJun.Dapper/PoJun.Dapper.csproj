@@ -10,15 +10,14 @@
     <Company>PoJun.Dapper.Repository</Company>
     <Product>PoJun.Dapper.Repository</Product>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <AssemblyVersion>3.1.3.0</AssemblyVersion>
-    <FileVersion>3.1.3.0</FileVersion>
-    <Version>3.1.3</Version>
+    <AssemblyVersion>3.1.4.0</AssemblyVersion>
+    <FileVersion>3.1.4.0</FileVersion>
+    <Version>3.1.4</Version>
     <PackageProjectUrl>https://github.com/YGeneral/PoJun.Dapper</PackageProjectUrl>
     <Copyright>PoJun</Copyright>
     <RepositoryUrl>https://github.com/YGeneral/PoJun.Dapper</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
-    <PackageReleaseNotes>1：解决QueryPageList方法传入的SQL如果带空格则SQL执行失败的问题
-2：解决字段别名赋值后无效的bug</PackageReleaseNotes> 
+    <PackageReleaseNotes>1：再次解决Linq的时间问题</PackageReleaseNotes> 
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">

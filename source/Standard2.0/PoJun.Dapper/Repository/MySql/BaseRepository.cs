@@ -650,12 +650,14 @@ namespace PoJun.Dapper.Repository.MySql
                 var key = string.Format("{0}{1}", columns.Key, _param.Count);
                 _param.Add(key, value);
             }
-            
+
             switch (columns.Value)
             {
                 case "System.String":
-                case "System.DateTime":
                     _setBuffer.AppendFormat("{0} = '{1}'", columns.Key, value);
+                    break;
+                case "System.DateTime":
+                    _setBuffer.AppendFormat("{0} = '{1}'", columns.Key, (Convert.ToDateTime(value)).ToString("yyyy/MM/dd HH:mm:ss"));
                     break;
                 case "System.Enum":
                     _setBuffer.AppendFormat("{0} = {1}", columns.Key, ExpressionUtil.GetEnumValue((column as LambdaExpression).Body.Type, value.ToString()));

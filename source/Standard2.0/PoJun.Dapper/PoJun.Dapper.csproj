@@ -10,14 +10,17 @@
     <Company>PoJun.Dapper.Repository</Company>
     <Product>PoJun.Dapper.Repository</Product>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <AssemblyVersion>3.1.4.0</AssemblyVersion>
-    <FileVersion>3.1.4.0</FileVersion>
-    <Version>3.1.4</Version>
+    <AssemblyVersion>3.1.6.0</AssemblyVersion>
+    <FileVersion>3.1.6.0</FileVersion>
+    <Version>3.1.6</Version>
     <PackageProjectUrl>https://github.com/YGeneral/PoJun.Dapper</PackageProjectUrl>
     <Copyright>PoJun</Copyright>
     <RepositoryUrl>https://github.com/YGeneral/PoJun.Dapper</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
-    <PackageReleaseNotes>1：再次解决Linq的时间问题</PackageReleaseNotes> 
+    <PackageReleaseNotes>1：新增 PostgreSQL 数据库支持
+2：修改注释</PackageReleaseNotes>
+    <PackageIcon>pojun.png</PackageIcon>
+    <ApplicationIcon>pojun_128.ico</ApplicationIcon> 
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
@@ -25,9 +28,17 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Dapper" Version="2.0.35" />
-    <PackageReference Include="MySql.Data" Version="8.0.21" />
+    <PackageReference Include="Dapper" Version="2.0.78" />
+    <PackageReference Include="MySql.Data" Version="8.0.22" />
+    <PackageReference Include="Npgsql" Version="5.0.1.1" />
     <PackageReference Include="System.Data.SqlClient" Version="4.8.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="pojun.png">
+      <Pack>True</Pack>
+      <PackagePath></PackagePath>
+    </None>
   </ItemGroup>
 
 </Project>

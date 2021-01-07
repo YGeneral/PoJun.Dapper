@@ -185,10 +185,10 @@ namespace PoJun.Dapper.Repository.SqlServer
 
         #endregion
 
-        #region 执行增（INSERT）删（DELETE）改（UPDATE）语句【带事务，可以同时执行多条SQL】【异步】【待测试】
+        #region 执行增（INSERT）删（DELETE）改（UPDATE）语句【带事务，可以同时执行多条SQL】【异步】
 
         /// <summary>
-        /// 执行增（INSERT）删（DELETE）改（UPDATE）语句【带事务，可以同时执行多条SQL】【异步】【待测试】
+        /// 执行增（INSERT）删（DELETE）改（UPDATE）语句【带事务，可以同时执行多条SQL】【异步】
         /// </summary>
         /// <param name="sqlDic">SQL + 参数【key：sql语句 value：参数】</param>
         /// <param name="connectionString">数据库链接字符串</param>

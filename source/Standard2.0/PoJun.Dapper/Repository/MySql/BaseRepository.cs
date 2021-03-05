@@ -663,7 +663,12 @@ namespace PoJun.Dapper.Repository.MySql
                     _setBuffer.AppendFormat("{0} = {1}", columns.Key, ExpressionUtil.GetEnumValue((column as LambdaExpression).Body.Type, value.ToString()));
                     break;
                 default:
-                    _setBuffer.AppendFormat("{0} = {1}", columns.Key, value);
+                    if (columns.Value.IndexOf("System.Nullable") >= 0 && columns.Value.IndexOf("System.DateTime") >= 0)
+                        _setBuffer.AppendFormat("{0} = '{1}'", columns.Key, (Convert.ToDateTime(value)).ToString("yyyy/MM/dd HH:mm:ss"));
+                    else if (columns.Value.IndexOf("System.Nullable") >= 0)
+                        _setBuffer.AppendFormat("{0} = '{1}'", columns.Key, value);
+                    else
+                        _setBuffer.AppendFormat("{0} = {1}", columns.Key, value);
                     break;
             }
 

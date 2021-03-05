@@ -14,50 +14,50 @@ namespace PoJun.Dapper.Test
         static async Task Main(string[] args)
         {
 
-            var result8_1 = await userRepository.initLinq().Where(x => x.Id == 5).Set(x => x.LastVersionTime, DateTime.Now).Set(x => x.Name, "撒旦发252").Set(x => x.Sex, SexType.Woman).UpdateAsync();
+            //var result8_1 = await userRepository.initLinq().Where(x => x.Id == 5).Set(x => x.LastVersionTime, DateTime.Now).Set(x => x.Name, "撒旦发252").Set(x => x.Sex, SexType.Woman).UpdateAsync();
 
-            var param = new Dictionary<string, object>();
-            param.Add("@Name", "20200923破军测试");
-            param.Add("@Age", 28);
-            param.Add("@Sex", 1);
-            param.Add("@IsDelete", true);
+            //var param = new Dictionary<string, object>();
+            //param.Add("@Name", "20200923破军测试");
+            //param.Add("@Age", 28);
+            //param.Add("@Sex", 1);
+            //param.Add("@IsDelete", true);
 
-            var sql = "insert into User (Name,Age,Sex,IsDelete) values(@Name,@Age,@Sex,@IsDelete)";
+            //var sql = "insert into User (Name,Age,Sex,IsDelete) values(@Name,@Age,@Sex,@IsDelete)";
 
-            var sfsfdsf = await userRepository.ExecuteAsync(sql, param);
+            //var sfsfdsf = await userRepository.ExecuteAsync(sql, param);
 
-            var name = "123";
-            var result161 = userRepository.initLinq().Where(a => a.Name == name).Select().ToList();
+            //var name = "123";
+            //var result161 = userRepository.initLinq().Where(a => a.Name == name).Select().ToList();
             #region 新增
 
-            //普通新增
-            var resut1 = userRepository.initLinq().Insert(new User() { Name = $"PoJun{DateTime.Now.ToString("yyyyMMddHHmmss")}", Age = 30 });
-            //普通新增
-            var result2 = await userRepository.initLinq().InsertAsync(new User() { Name = $"PoJun{DateTime.Now.ToString("yyyyMMddHHmmss")}", Age = 30 });
-            //新增返回自增ID
-            var result3 = await userRepository.initLinq().InsertReturnIdAsync(new User() { Name = $"PoJun{DateTime.Now.ToString("yyyyMMddHHmmss")}", Age = 30 });
-            //新增返回自增ID
-            var result4 = userRepository.initLinq().InsertReturnId(new User() { Name = $"PoJun{DateTime.Now.ToString("yyyyMMddHHmmss")}", Age = 30 });
+            ////普通新增
+            //var resut1 = userRepository.initLinq().Insert(new User() { Name = $"PoJun{DateTime.Now.ToString("yyyyMMddHHmmss")}", Age = 30 });
+            ////普通新增
+            //var result2 = await userRepository.initLinq().InsertAsync(new User() { Name = $"PoJun{DateTime.Now.ToString("yyyyMMddHHmmss")}", Age = 30 });
+            ////新增返回自增ID
+            //var result3 = await userRepository.initLinq().InsertReturnIdAsync(new User() { Name = $"PoJun{DateTime.Now.ToString("yyyyMMddHHmmss")}", Age = 30 });
+            ////新增返回自增ID
+            //var result4 = userRepository.initLinq().InsertReturnId(new User() { Name = $"PoJun{DateTime.Now.ToString("yyyyMMddHHmmss")}", Age = 30 });
 
-            //批量新增
-            var addList = new List<User>
-            {
-                new User() { Name = $"PoJun{DateTime.Now.ToString("yyyyMMddHHmmss")}", Age = 30, LastVersionTime = DateTime.Now },
-                new User() { Name = $"PoJun{DateTime.Now.ToString("yyyyMMddHHmmss")}", Age = 30, LastVersionTime = DateTime.Now },
-                new User() { Name = $"PoJun{DateTime.Now.ToString("yyyyMMddHHmmss")}", Age = 30, LastVersionTime = DateTime.Now }
-            };
-            var result5 = await userRepository.initLinq().InsertAsync(addList);
+            ////批量新增
+            //var addList = new List<User>
+            //{
+            //    new User() { Name = $"PoJun{DateTime.Now.ToString("yyyyMMddHHmmss")}", Age = 30, LastVersionTime = DateTime.Now },
+            //    new User() { Name = $"PoJun{DateTime.Now.ToString("yyyyMMddHHmmss")}", Age = 30, LastVersionTime = DateTime.Now },
+            //    new User() { Name = $"PoJun{DateTime.Now.ToString("yyyyMMddHHmmss")}", Age = 30, LastVersionTime = DateTime.Now }
+            //};
+            //var result5 = await userRepository.initLinq().InsertAsync(addList);
 
             #endregion
 
             #region 修改
 
             //单条主键更新（并且不更新Age字段）
-            var result6 = await userRepository.initLinq().Filter(x => x.Age).UpdateAsync(new User() { Id = 1, Name = $"修改后的PoJun{DateTime.Now.ToString("yyyyMMddHHmmss")}", Sex = SexType.Woman });
+            var result6 = await userRepository.initLinq().Filter(x => x.Age).UpdateAsync(new User() { Id = 1, Name = $"修改后的PoJun{DateTime.Now.ToString("yyyyMMddHHmmss")}", Sex = SexType.Woman, LastVersionTime = DateTime.Now });
             //单条主键更新（并且不更新Age、Sex字段）
             var result7 = await userRepository.initLinq().Filter(x => x.Age).Filter(x => x.Sex).UpdateAsync(new User() { Id = 2, Name = $"修改后的PoJun{DateTime.Now.ToString("yyyyMMddHHmmss")}" });
             //动态更新字段
-            var result8 = await userRepository.initLinq().Where(x => x.IsDelete == false && x.Id > 30 && x.Id < 50).Set(x => x.IsDelete, true).UpdateAsync();
+            var result8 = await userRepository.initLinq().Where(x => x.IsDelete == false && x.Id > 30 && x.Id < 50).Set(x => x.IsDelete, true).Set(x=>x.LastVersionTime,DateTime.Now).UpdateAsync();
 
 
 
@@ -129,7 +129,7 @@ namespace PoJun.Dapper.Test
 
             #endregion
 
-            Console.WriteLine(resut1);
+            Console.WriteLine("");
         }
     }
 
@@ -179,7 +179,7 @@ namespace PoJun.Dapper.Test
 
         public bool IsDelete { get; set; }
 
-        public DateTime LastVersionTime { get; set; }
+        public DateTime? LastVersionTime { get; set; }
     }
 
     public enum SexType : int

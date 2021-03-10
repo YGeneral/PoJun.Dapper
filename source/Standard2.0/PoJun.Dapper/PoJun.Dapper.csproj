@@ -10,15 +10,14 @@
     <Company>PoJun.Dapper.Repository</Company>
     <Product>PoJun.Dapper.Repository</Product>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <AssemblyVersion>3.1.7.0</AssemblyVersion>
-    <FileVersion>3.1.7.0</FileVersion>
-    <Version>3.1.7</Version>
+    <AssemblyVersion>3.1.9.0</AssemblyVersion>
+    <FileVersion>3.1.9.0</FileVersion>
+    <Version>3.1.9</Version>
     <PackageProjectUrl>https://github.com/YGeneral/PoJun.Dapper</PackageProjectUrl>
     <Copyright>PoJun</Copyright>
     <RepositoryUrl>https://github.com/YGeneral/PoJun.Dapper</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
-    <PackageReleaseNotes>1：新增 PostgreSQL 数据库支持
-2：修改注释</PackageReleaseNotes>
+    <PackageReleaseNotes>修复执行SQL的方式进行新增的时候报错的bug</PackageReleaseNotes>
     <PackageIcon>pojun.png</PackageIcon>
     <ApplicationIcon>pojun_128.ico</ApplicationIcon> 
   </PropertyGroup>

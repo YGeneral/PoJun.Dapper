@@ -54,15 +54,12 @@ namespace PoJun.Dapper.Repository.MySql
         /// <returns>自增ID</returns>
         public int Insert(string sql, object param = null, int? commandTimeout = null)
         {
-            sql = $"DELIMITER;{sql};set @id= LAST_INSERT_ID();DELIMITER;";
-            var newParam = new DynamicParameters();
-            newParam.AddDynamicParams(param);
-            newParam.Add("@id", dbType: DbType.Int32, direction: ParameterDirection.Output);
+            sql = $"{sql};select LAST_INSERT_ID();";
             using (IDbConnection conn = new MySqlConnection(ConnectionString))
             {
-                conn.Execute(sql, newParam, commandTimeout: commandTimeout);
-                var id = newParam.Get<int>("@id");
-                return id;
+                if (conn.State != ConnectionState.Open)
+                    conn.Open();
+                return (conn.Query<int>(sql, param, commandTimeout: commandTimeout, commandType: CommandType.Text)).FirstOrDefault();
             }
         }
 
@@ -79,13 +76,12 @@ namespace PoJun.Dapper.Repository.MySql
         /// <returns>自增ID</returns>
         public async Task<int> InsertAsync(string sql, object param = null, int? commandTimeout = null)
         {
-            sql = $"DELIMITER;{sql};set @id= LAST_INSERT_ID();DELIMITER;";
+            sql = $"{sql};select LAST_INSERT_ID();";
             using (IDbConnection conn = new MySqlConnection(ConnectionString))
             {
                 if (conn.State != ConnectionState.Open)
                     conn.Open();
-                var result = await conn.ExecuteScalarAsync<int>(sql, param, commandTimeout: commandTimeout);
-                return result;
+                return (await conn.QueryAsync<int>(sql, param, commandTimeout: commandTimeout, commandType: CommandType.Text)).FirstOrDefault();
             }
         }
 
@@ -161,6 +157,8 @@ namespace PoJun.Dapper.Repository.MySql
         {
             using (IDbConnection conn = new MySqlConnection(ConnectionString))
             {
+                if (conn.State != ConnectionState.Open)
+                    conn.Open();
                 return conn.Execute(sql, param, commandTimeout: commandTimeout);
             }
         }

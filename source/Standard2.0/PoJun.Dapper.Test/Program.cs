@@ -13,21 +13,29 @@ namespace PoJun.Dapper.Test
 
         static async Task Main(string[] args)
         {
+            var param = new Dictionary<string, object>();
+            param.Add("@Name", "20210310破军测试");
+            param.Add("@Age", "30");
+            param.Add("@Sex", 1);
+            param.Add("@IsDelete", true);
+            param.Add("@LastVersionTime", DateTime.Now);
 
-            //var result8_1 = await userRepository.initLinq().Where(x => x.Id == 5).Set(x => x.LastVersionTime, DateTime.Now).Set(x => x.Name, "撒旦发252").Set(x => x.Sex, SexType.Woman).UpdateAsync();
+            var aa = userRepository.Insert("insert into User (Name,Age,Sex,IsDelete,LastVersionTime) value(@Name,@Age,@Sex,@IsDelete,@LastVersionTime)", param);
 
-            //var param = new Dictionary<string, object>();
-            //param.Add("@Name", "20200923破军测试");
-            //param.Add("@Age", 28);
-            //param.Add("@Sex", 1);
-            //param.Add("@IsDelete", true);
+            var result8_1 = await userRepository.initLinq().Where(x => x.Id == 5).Set(x => x.LastVersionTime, DateTime.Now).Set(x => x.Name, "撒旦发252").Set(x => x.Sex, SexType.Woman).UpdateAsync();
 
-            //var sql = "insert into User (Name,Age,Sex,IsDelete) values(@Name,@Age,@Sex,@IsDelete)";
+            param = new Dictionary<string, object>();
+            param.Add("@Name", "20200923破军测试");
+            param.Add("@Age", 28);
+            param.Add("@Sex", 1);
+            param.Add("@IsDelete", true);
 
-            //var sfsfdsf = await userRepository.ExecuteAsync(sql, param);
+            var sql = "insert into User (Name,Age,Sex,IsDelete) values(@Name,@Age,@Sex,@IsDelete)";
 
-            //var name = "123";
-            //var result161 = userRepository.initLinq().Where(a => a.Name == name).Select().ToList();
+            var sfsfdsf = await userRepository.ExecuteAsync(sql, param);
+
+            var name = "123";
+            var result161 = userRepository.initLinq().Where(a => a.Name == name).Select().ToList();
             #region 新增
 
             ////普通新增
